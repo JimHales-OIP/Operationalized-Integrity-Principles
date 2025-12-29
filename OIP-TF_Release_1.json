@@ -1,0 +1,4694 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OIP-TF Release 1",
+  "type": "object",
+  "properties": {
+    "oip_tf_version": "OIP-TF Release 1",
+    "entity_lock": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "source_hierarchy": {
+      "type": "string",
+      "enum": [
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "None"
+      ]
+    },
+    "evidence_density_ok": {
+      "type": "boolean"
+    },
+    "concentration_check": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "bloc": {
+          "type": "string"
+        },
+        "flag": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "bloc",
+        "flag"
+      ]
+    },
+    "temporal_integrity_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "numerical_discipline": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "fail"
+      ]
+    },
+    "causal_discipline": {
+      "type": "string",
+      "enum": [
+        "none",
+        "partial",
+        "major"
+      ]
+    },
+    "coverage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "missing_elements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "high confidence",
+        "medium confidence",
+        "low confidence"
+      ],
+      "description": "Overall confidence classification for the evaluated output. Enum-only to ensure cross-tool comparability."
+    },
+    "ecg": {
+      "type": "object",
+      "description": "Epistemic Class Gate (ECG) audit payload used to modulate OIP-TF scoring (0=disapply, 1=Core, 2=Reg).",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether ECG modulation was applied for this scoring run."
+        },
+        "decomposition": {
+          "type": "array",
+          "description": "Atomic propositions extracted from the prompt for ECG classification.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_per_proposition": {
+          "type": "array",
+          "description": "ECG class label per proposition, aligned with decomposition order.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6"
+            ]
+          }
+        },
+        "governing_class": {
+          "type": "string",
+          "description": "Escalated governing ECG class used for gate modulation (interpreted as ECG(Q|X) when X is present).",
+          "enum": [
+            "E1",
+            "E2",
+            "E3",
+            "E4",
+            "E5",
+            "E6"
+          ]
+        },
+        "scf": {
+          "type": "string",
+          "description": "Simplicity Calibration Flag derived from governing class (T, C, F, or CF for conditional-to-false).",
+          "enum": [
+            "T",
+            "C",
+            "F",
+            "CF"
+          ]
+        },
+        "overrides_applied": {
+          "type": "array",
+          "description": "Deterministic override identifiers applied (e.g., TOTALISATION, CAUSAL_EVALUATIVE, HIGH_STAKES_ACTION).",
+          "items": {
+            "type": "string",
+            "enum": [
+              "TOTALISATION",
+              "CAUSAL_EVALUATIVE",
+              "HIGH_STAKES_ACTION"
+            ]
+          },
+          "default": []
+        },
+        "gate_profile": {
+          "type": "object",
+          "description": "Per-gate intensity profile after ECG and overrides. Keys correspond to OIP gate numbers 1..7.",
+          "properties": {
+            "1": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "2": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "3": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "4": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "5": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "6": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "7": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            }
+          },
+          "required": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "examples": [
+            {
+              "1": 2,
+              "2": 2,
+              "3": 0,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            }
+          ]
+        },
+        "q_only_classification": {
+          "type": "object",
+          "description": "ECG classification derived from Q alone (before considering X).",
+          "properties": {
+            "decomposition": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "class_per_proposition": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "E1",
+                  "E2",
+                  "E3",
+                  "E4",
+                  "E5",
+                  "E6"
+                ]
+              }
+            },
+            "governing_class": {
+              "type": "string",
+              "enum": [
+                "E1",
+                "E2",
+                "E3",
+                "E4",
+                "E5",
+                "E6"
+              ]
+            }
+          },
+          "required": [
+            "governing_class"
+          ]
+        },
+        "qx_adjustment": {
+          "type": "object",
+          "description": "ECG adjustment from ECG(Q) to ECG(Q|X) using source data adequacy signals.",
+          "properties": {
+            "ecg_q": {
+              "type": "string",
+              "enum": [
+                "E1",
+                "E2",
+                "E3",
+                "E4",
+                "E5",
+                "E6"
+              ]
+            },
+            "ecg_q_given_x": {
+              "type": "string",
+              "enum": [
+                "E1",
+                "E2",
+                "E3",
+                "E4",
+                "E5",
+                "E6"
+              ]
+            },
+            "adjusted": {
+              "type": "boolean"
+            },
+            "adjustment_rationale": {
+              "type": "string"
+            },
+            "constraints_from_x": {
+              "type": "string",
+              "description": "How SDA(X) limits what can be asserted/refused."
+            },
+            "terminal_rule_applied": {
+              "type": "string",
+              "enum": [
+                "RULE_A_ACCESS_ABSENT",
+                "RULE_B_EVIDENCE_ABSENT",
+                "RULE_C_NORMAL"
+              ],
+              "description": "Which canonical ECG(Q|X) rule was applied: A=access absent→E2 terminal; B=evidence absent→E3 terminal; C=access+evidence present→non-terminal class."
+            }
+          },
+          "required": [
+            "ecg_q",
+            "ecg_q_given_x",
+            "adjusted",
+            "terminal_rule_applied"
+          ]
+        },
+        "ecg_label": {
+          "type": "string",
+          "description": "Human-readable label for ECG to be displayed alongside governing_class.",
+          "const": "Epistemic Category of the Question"
+        },
+        "scf_label": {
+          "type": "string",
+          "description": "Human-readable label for SCF to be displayed alongside scf.",
+          "const": "Simplicity Calibration Flag"
+        },
+        "adjusted_class": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Adjusted ECG class if changed; otherwise null.",
+          "examples": [
+            "E5",
+            "E3",
+            null
+          ]
+        },
+        "adjustment_direction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "upward",
+            "downward",
+            null
+          ],
+          "description": "Direction of adjustment relative to governing class."
+        },
+        "classification_confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low"
+          ],
+          "description": "Rule-bound confidence in ECG classification (not subjective). High=clear match; Medium=mixed cues resolved; Low=boundary case; decomposition recommended."
+        },
+        "decomposition_recommended": {
+          "type": "boolean",
+          "description": "True if Q is mixed/compound such that decomposition is recommended to reduce ECG ambiguity."
+        },
+        "justification_anchors": {
+          "type": "array",
+          "minItems": 2,
+          "description": "Strict anchors supporting ECG classification and any adjustment. Must include at least one Q_SEG and one Y_SEG. If adjustment_direction is upward/downward due to evidence sufficiency/insufficiency, include at least one X_SEG or DOC_SEG.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "anchor_type": {
+                "type": "string",
+                "enum": [
+                  "X_SEG",
+                  "DOC_SEG",
+                  "Q_SEG",
+                  "Y_SEG"
+                ]
+              },
+              "seg_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "seg_hash": {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-fA-F]{64}$"
+              },
+              "char_range": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "quote_snip": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240
+              },
+              "source_locator": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "anchor_type",
+              "seg_id",
+              "seg_hash",
+              "quote_snip"
+            ]
+          }
+        },
+        "tie_break_rule_applied": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "HighestOperativeClaim",
+            "DecomposeOrEscalate",
+            "BurdenOfProof",
+            null
+          ],
+          "description": "If mixed question required tie-break, record which rule resolved it; otherwise null."
+        },
+        "escalation_order_used": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6"
+            ]
+          },
+          "minItems": 6,
+          "maxItems": 6,
+          "const": [
+            "E2",
+            "E3",
+            "E5",
+            "E1",
+            "E6",
+            "E4"
+          ],
+          "description": "Canonical escalation order used to select governing ECG from proposition classes."
+        }
+      },
+      "required": [
+        "enabled",
+        "governing_class",
+        "scf",
+        "gate_profile",
+        "ecg_label",
+        "scf_label",
+        "classification_confidence",
+        "decomposition_recommended",
+        "justification_anchors",
+        "tie_break_rule_applied",
+        "escalation_order_used"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E1"
+              },
+              "overrides_applied": {
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 1,
+                  "2": 1,
+                  "3": 1,
+                  "4": 1,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E2"
+              },
+              "overrides_applied": {
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 1,
+                  "2": 0,
+                  "3": 0,
+                  "4": 1,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E3"
+              },
+              "overrides_applied": {
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 1,
+                  "2": 0,
+                  "3": 0,
+                  "4": 1,
+                  "5": 1,
+                  "6": 0,
+                  "7": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E4"
+              },
+              "overrides_applied": {
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 2,
+                  "2": 2,
+                  "3": 2,
+                  "4": 2,
+                  "5": 2,
+                  "6": 2,
+                  "7": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E5"
+              },
+              "overrides_applied": {
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 1,
+                  "2": 1,
+                  "3": 0,
+                  "4": 0,
+                  "5": 1,
+                  "6": 0,
+                  "7": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E6"
+              },
+              "overrides_applied": {
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 2,
+                  "2": 2,
+                  "3": 2,
+                  "4": 2,
+                  "5": 2,
+                  "6": 1,
+                  "7": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "enum": [
+                  "E2",
+                  "E3"
+                ]
+              }
+            },
+            "required": [
+              "governing_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "overrides_applied": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E6"
+              },
+              "overrides_applied": {
+                "contains": {
+                  "const": "TOTALISATION"
+                }
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 2,
+                  "2": 2,
+                  "3": 2,
+                  "4": 2,
+                  "5": 2,
+                  "6": 2,
+                  "7": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "governing_class": {
+                "const": "E5"
+              },
+              "overrides_applied": {
+                "contains": {
+                  "const": "CAUSAL_EVALUATIVE"
+                }
+              }
+            },
+            "required": [
+              "governing_class",
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gate_profile": {
+                "const": {
+                  "1": 1,
+                  "2": 1,
+                  "3": 0,
+                  "4": 0,
+                  "5": 1,
+                  "6": 0,
+                  "7": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "overrides_applied": {
+                "contains": {
+                  "const": "HIGH_STAKES_ACTION"
+                }
+              }
+            },
+            "required": [
+              "overrides_applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "governing_class": {
+                "const": "E6"
+              }
+            },
+            "required": [
+              "governing_class"
+            ]
+          }
+        }
+      ]
+    },
+    "tf_calibration": {
+      "type": "object",
+      "description": "How ECG gate_profile modulates which TF checks are scored or treated as disapplied (no-penalty).",
+      "properties": {
+        "disapplied_checks": {
+          "type": "array",
+          "description": "List of TF check names treated as disapplied due to ECG (no penalty for non-application).",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "evidence_density_ok",
+              "concentration_check",
+              "coverage"
+            ]
+          ]
+        },
+        "core_intensity_checks": {
+          "type": "array",
+          "description": "Checks evaluated at OIP-Core intensity (lighter evidential / structural burden).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reg_intensity_checks": {
+          "type": "array",
+          "description": "Checks evaluated at OIP-Reg intensity (full burden).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Free-text rationale for any disapplication/attenuation decisions and edge cases."
+        }
+      },
+      "required": [
+        "disapplied_checks",
+        "core_intensity_checks",
+        "reg_intensity_checks"
+      ]
+    },
+    "applicability": {
+      "type": "object",
+      "description": "Per-field applicability labels driven by ECG (required/optional/disapplied). If present, must cover the listed fields.",
+      "properties": {
+        "source_hierarchy": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        },
+        "evidence_density_ok": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        },
+        "concentration_check": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        },
+        "temporal_integrity_flags": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        },
+        "numerical_discipline": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        },
+        "coverage": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        },
+        "causal_discipline": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        },
+        "missing_elements": {
+          "type": "string",
+          "enum": [
+            "required",
+            "optional",
+            "disapplied"
+          ]
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Evaluation inputs. Q is the question/prompt. X is the source data to ground correctness. Y is the answer/output to evaluate.",
+      "properties": {
+        "Q": {
+          "type": "string",
+          "description": "Question or task prompt being answered."
+        },
+        "X": {
+          "type": "string",
+          "description": "Source data provided for grounding (may be empty only if explicitly declared 'no source data'). Must be supplied separately from Q and Y."
+        },
+        "Y": {
+          "type": "string",
+          "description": "Answer/output to be evaluated and scored."
+        },
+        "x_mode": {
+          "type": "string",
+          "description": "Whether X is required and how it should be interpreted. 'reasoning_quality_only' disables all source-based checks and evaluates only logical coherence and structure of Y relative to Q.",
+          "enum": [
+            "explicit",
+            "document_internal",
+            "reasoning_quality_only"
+          ],
+          "default": "required"
+        },
+        "x_format_hint": {
+          "type": "string",
+          "description": "Optional hint describing X format (e.g., policy excerpt, transaction log, dataset snippet, email thread)."
+        },
+        "x_handle": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "content_hash",
+                "byte_len",
+                "segmentation_rules_version",
+                "normalization_rules_version"
+              ],
+              "properties": {
+                "content_hash": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                },
+                "byte_len": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_ref": {
+                  "type": "string"
+                },
+                "retrieval_method": {
+                  "type": "string",
+                  "enum": [
+                    "user_provided",
+                    "retrieved_by_evaluator",
+                    "unknown"
+                  ]
+                },
+                "segmentation_rules_version": {
+                  "type": "string"
+                },
+                "normalization_rules_version": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9._\\-:]+$",
+              "description": "Compact handle ID referencing an entry in handles_manifest_entries."
+            }
+          ],
+          "description": "Either a full handle object or a compact handle_id string."
+        },
+        "y_handle": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "content_hash",
+                "byte_len",
+                "segmentation_rules_version",
+                "normalization_rules_version"
+              ],
+              "properties": {
+                "content_hash": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                },
+                "byte_len": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_ref": {
+                  "type": "string"
+                },
+                "retrieval_method": {
+                  "type": "string",
+                  "enum": [
+                    "user_provided",
+                    "retrieved_by_evaluator",
+                    "unknown"
+                  ]
+                },
+                "segmentation_rules_version": {
+                  "type": "string"
+                },
+                "normalization_rules_version": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9._\\-:]+$",
+              "description": "Compact handle ID referencing an entry in handles_manifest_entries."
+            }
+          ],
+          "description": "Either a full handle object or a compact handle_id string."
+        },
+        "q_mode": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "implicit"
+          ],
+          "description": "Whether QUESTION Q is provided explicitly by the user/tool ('explicit') or must be derived by the evaluator from X/Y context ('implicit'). To avoid ambiguity, q_mode is REQUIRED."
+        },
+        "q_derived": {
+          "type": "string",
+          "description": "If q_mode='implicit': evaluator-derived QUESTION Q used for scoring. Must be included verbatim as used (no paraphrase beyond minimal normalization)."
+        },
+        "q_derivation_basis": {
+          "type": "string",
+          "enum": [
+            "llm_derived_from_document",
+            "llm_derived_from_user_intent",
+            "human_provided_summary",
+            "other"
+          ],
+          "description": "If q_mode='implicit': provenance of q_derived."
+        },
+        "q_scope_drift_caveat": {
+          "type": "string",
+          "description": "If q_mode='implicit': short caveat noting that q_derived may reflect evaluator interpretation and may drift from user intent; should state evaluation scope boundary (e.g., internal coherence only)."
+        },
+        "y_mode": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "implicit"
+          ],
+          "description": "Whether ANSWER/OUTPUT Y is provided explicitly ('explicit') or must be derived by the evaluator ('implicit'). 'implicit' is intended for self-audit runs where Y is an extracted claim-set/summary derived from the same document as X, and must be disclosed as y_derived."
+        },
+        "y_derived": {
+          "type": "string",
+          "description": "If y_mode='implicit': evaluator-derived Y (e.g., extracted main claims, condensed narrative, or claim list) used as the subject of evaluation. Must be included verbatim as used."
+        },
+        "y_derivation_basis": {
+          "type": "string",
+          "enum": [
+            "llm_extracted_from_x",
+            "llm_extracted_from_document",
+            "human_provided_extraction",
+            "other"
+          ],
+          "description": "If y_mode='implicit': provenance of y_derived."
+        },
+        "y_scope_drift_caveat": {
+          "type": "string",
+          "description": "If y_mode='implicit': short caveat noting that y_derived is an extraction/abstraction that may omit nuance; evaluation applies to y_derived within scope, not necessarily the full original document."
+        }
+      },
+      "required": [
+        "x_mode",
+        "q_mode",
+        "y_mode"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "q_mode": {
+                "const": "explicit"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "Q"
+            ],
+            "properties": {
+              "Q": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "q_mode": {
+                "const": "implicit"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "q_derived",
+              "q_derivation_basis",
+              "q_scope_drift_caveat"
+            ],
+            "properties": {
+              "Q": {
+                "type": "string"
+              },
+              "q_derived": {
+                "minLength": 1
+              },
+              "q_scope_drift_caveat": {
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "y_mode": {
+                "const": "explicit"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "Y"
+            ],
+            "properties": {
+              "Y": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "y_mode": {
+                "const": "implicit"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "y_derived",
+              "y_derivation_basis",
+              "y_scope_drift_caveat"
+            ],
+            "properties": {
+              "Y": {
+                "type": "string"
+              },
+              "y_derived": {
+                "minLength": 1
+              },
+              "y_scope_drift_caveat": {
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "x_mode": {
+                "const": "document_internal"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "x_handle",
+              "y_handle"
+            ],
+            "properties": {
+              "x_handle": {
+                "type": "string",
+                "minLength": 1
+              },
+              "y_handle": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "description": "In document_internal mode, x_handle and y_handle SHOULD refer to the same document handle to prevent scope drift. Enforce at orchestration/validator layer if $data equality is unsupported."
+          }
+        }
+      ]
+    },
+    "source_data_assessment": {
+      "type": "object",
+      "description": "Source Data Adequacy (SDA) assessment of X for this evaluation run.",
+      "properties": {
+        "sda_class": {
+          "type": "string",
+          "enum": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5"
+          ],
+          "description": "SDA class for X."
+        },
+        "mixed": {
+          "type": "boolean",
+          "description": "True if X has mixed adequacy across sub-claims (partial coverage)."
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Human-readable rationale for SDA classification."
+        },
+        "conflict_notes": {
+          "type": "string",
+          "description": "If S5 or mixed, describe conflicts or inconsistencies detected in X."
+        },
+        "x_coverage_map": {
+          "type": "array",
+          "description": "Mapping of decomposed question requirements to whether X contains relevant evidence.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "q_part": {
+                "type": "string"
+              },
+              "x_support": {
+                "type": "string",
+                "enum": [
+                  "supported",
+                  "partial",
+                  "absent",
+                  "conflicted"
+                ]
+              },
+              "x_spans": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Optional identifiers/quotes/spans from X supporting the label."
+              }
+            },
+            "required": [
+              "q_part",
+              "x_support"
+            ]
+          }
+        },
+        "sda_label": {
+          "type": "string",
+          "description": "Human-readable label for SDA to be displayed alongside sda_class.",
+          "const": "Source Data Assessment"
+        }
+      },
+      "required": [
+        "sda_class",
+        "rationale",
+        "sda_label"
+      ]
+    },
+    "source_grounded_correctness": {
+      "type": "object",
+      "description": "Atomic-claim decomposition and entailment assessment of Y against X.",
+      "properties": {
+        "y_claims": {
+          "type": "array",
+          "description": "Atomic claims extracted from Y.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "claim": {
+                "type": "string"
+              },
+              "claim_type": {
+                "type": "string",
+                "enum": [
+                  "factual",
+                  "inferential",
+                  "normative",
+                  "procedural",
+                  "meta_uncertainty"
+                ]
+              }
+            },
+            "required": [
+              "claim",
+              "claim_type"
+            ]
+          }
+        },
+        "entailment_table": {
+          "type": "array",
+          "description": "Entailment status for each factual/inferential claim relative to X.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "claim": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "entailed",
+                  "contradicted",
+                  "unsupported",
+                  "underspecified",
+                  "non_truth_apt"
+                ]
+              },
+              "x_spans": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Quotes/spans from X supporting the status; required for 'entailed' and 'contradicted'."
+              },
+              "notes": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "claim",
+              "status"
+            ]
+          }
+        },
+        "question_coverage": {
+          "type": "array",
+          "description": "Coverage of decomposed Q requirements by Y, relative to X.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "q_part": {
+                "type": "string"
+              },
+              "coverage_status": {
+                "type": "string",
+                "enum": [
+                  "answered_correctly",
+                  "answered_incorrectly",
+                  "omitted",
+                  "refused_appropriately",
+                  "unanswerable_from_x_unacknowledged"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "q_part",
+              "coverage_status"
+            ]
+          }
+        }
+      },
+      "required": [
+        "y_claims",
+        "entailment_table",
+        "question_coverage"
+      ]
+    },
+    "evaluator_config": {
+      "type": "object",
+      "description": "Evaluator configuration to mitigate self-regard risk (model separation principle).",
+      "properties": {
+        "generator_model_id": {
+          "type": "string",
+          "description": "Identifier/name of the model used to generate Y (if known)."
+        },
+        "evaluator_model_id": {
+          "type": "string",
+          "description": "Identifier/name of the model used to evaluate X and score Y."
+        },
+        "separation_enforced": {
+          "type": "boolean",
+          "description": "True if evaluator is not the same model instance as generator."
+        },
+        "dual_pass": {
+          "type": "boolean",
+          "description": "True if two independent evaluator passes were run."
+        },
+        "conservative_fallback_applied": {
+          "type": "boolean",
+          "description": "True if a conservative fallback was applied due to evaluator disagreement or ambiguity."
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "separation_enforced"
+      ]
+    },
+    "prompt_templates": {
+      "type": "object",
+      "description": "Templates for prompting users to supply inputs separately (X, Q, Y) and for running evaluation/scoring. Intended as human-readable scaffolding.",
+      "properties": {
+        "user_prompt_for_X": {
+          "type": "string",
+          "description": "Prompt text to request source input X separately.",
+          "default": "Provide SOURCE DATA X (verbatim). Do not include the question or the answer. If X is long, include the most relevant excerpts and label sections."
+        },
+        "user_prompt_for_Q": {
+          "type": "string",
+          "description": "Prompt text to request question prompt Q separately.",
+          "default": "Provide QUESTION Q (the task prompt) separately from X and Y."
+        },
+        "user_prompt_for_Y": {
+          "type": "string",
+          "description": "Prompt text to request answer/output Y separately.",
+          "default": "Provide ANSWER/OUTPUT Y exactly as produced (verbatim). Do not revise it."
+        },
+        "evaluation_prompt": {
+          "type": "string",
+          "description": "Canonical evaluation instruction to the evaluator model.",
+          "default": "Given Q, X, and Y: (1) assess SDA(X); (2) compute ECG(Q) then adjust to ECG(Q|X); (3) compute ECG gate_profile and TF calibration; (4) decompose Y into atomic claims; (5) label each claim as entailed/contradicted/unsupported/underspecified relative to X with X span anchors; (6) evaluate question coverage; (7) score using OIP-TF with ECG modulation; (8) emit full audit artifacts. (9) CPD-HSF: derive ECG_min(Y) from Y claim posture triggers; enforce ECG(Q|X) >= ECG_min(Y) even in document_internal; apply coherence-only confidence cap for ECG_min(Y)>=E5 unless an internal safety bundle is present."
+        },
+        "human_summary_prompt": {
+          "type": "string",
+          "description": "Optional instruction to generate the human_summary block from audit fields without introducing new judgments.",
+          "default": "Generate human_summary using controlled vocab fields. Derive verdict/confidence from SDA, entailment and coverage. Avoid technical jargon. Include up to 3 key evidence anchors from X. Do not introduce judgments not supported by audit artifacts."
+        }
+      },
+      "required": [
+        "user_prompt_for_X",
+        "user_prompt_for_Q",
+        "user_prompt_for_Y",
+        "evaluation_prompt"
+      ]
+    },
+    "human_summary": {
+      "type": "object",
+      "description": "Plain-language derived view for non-expert readers. Must be traceable to audit fields (SDA, ECG(Q|X), entailment, coverage, TF scores).",
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "description": "Single bottom-line judgment (controlled vocabulary).",
+          "enum": [
+            "supported_by_evidence",
+            "partially_supported",
+            "contradicted_by_evidence",
+            "not_supported_insufficient_evidence",
+            "unanswerable_from_evidence",
+            "normative_value_based"
+          ]
+        },
+        "confidence_level": {
+          "type": "string",
+          "description": "Confidence in faithfulness to X (not real-world truth).",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "very_low"
+          ]
+        },
+        "plain_language_explanation": {
+          "type": "string",
+          "description": "2–4 short sentences explaining why the verdict was reached. Avoid technical terms."
+        },
+        "key_evidence_anchors": {
+          "type": "array",
+          "description": "Up to three quotes/spans from X that most strongly support or contradict Y.",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "properties": {
+              "anchor_text": {
+                "type": "string",
+                "description": "Quoted span or short excerpt from X."
+              },
+              "anchor_type": {
+                "type": "string",
+                "enum": [
+                  "supporting",
+                  "contradicting"
+                ],
+                "description": "Whether this anchor supports or contradicts Y."
+              },
+              "x_span_ref": {
+                "type": "string",
+                "description": "Optional pointer/identifier into X (e.g., section label, line range, timestamp)."
+              },
+              "notes": {
+                "type": "string",
+                "description": "Optional brief note explaining relevance."
+              }
+            },
+            "required": [
+              "anchor_text",
+              "anchor_type"
+            ]
+          }
+        },
+        "key_risks_limitations": {
+          "type": "array",
+          "description": "Most important caveats or limitations (e.g., partial X coverage, conflicts, inferential leap).",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6
+        },
+        "reliance_advice": {
+          "type": "string",
+          "description": "Practical guidance on use (controlled phrases recommended).",
+          "enum": [
+            "safe_for_factual_reporting",
+            "use_with_caution_evidence_limited",
+            "do_not_rely_without_additional_verification",
+            "opinion_or_value_judgment_only",
+            "requires_human_review"
+          ]
+        },
+        "epistemic_note": {
+          "type": "string",
+          "description": "Optional one-sentence note on the nature of the question (e.g., simple factual, interpretive, normative)."
+        },
+        "traceability": {
+          "type": "object",
+          "description": "Optional pointers showing which audit fields justify each summary component.",
+          "properties": {
+            "sda_class": {
+              "type": "string",
+              "enum": [
+                "S1",
+                "S2",
+                "S3",
+                "S4",
+                "S5"
+              ]
+            },
+            "ecg_governing_class": {
+              "type": "string",
+              "enum": [
+                "E1",
+                "E2",
+                "E3",
+                "E4",
+                "E5",
+                "E6"
+              ]
+            },
+            "entailment_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Identifiers of entailment_table entries or claim texts referenced."
+            },
+            "coverage_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Identifiers of question_coverage entries referenced."
+            },
+            "score_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Names of TF score fields/flags referenced."
+            }
+          }
+        },
+        "acronym_note": {
+          "type": "string",
+          "description": "Optional note explaining acronyms if any appear in the human summary. Recommended to avoid acronyms entirely in human_summary text."
+        },
+        "scope_safeguard_line": {
+          "type": "string",
+          "description": "Mandatory disclosure line clarifying evaluation scope. In document-internal mode, must explicitly state that the evaluation checks internal coherence/justification and does not independently verify real-world truth.",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "verdict",
+        "confidence_level",
+        "plain_language_explanation",
+        "key_risks_limitations",
+        "reliance_advice"
+      ]
+    },
+    "acronym_expansions": {
+      "type": "object",
+      "description": "Mandatory expansions for acronyms used in outputs to ensure non-expert readability.",
+      "properties": {
+        "SDA": {
+          "type": "string",
+          "const": "Source Data Assessment",
+          "description": "Expansion of SDA acronym."
+        },
+        "ECG": {
+          "type": "string",
+          "const": "Epistemic Category of the Question",
+          "description": "Expansion of ECG acronym."
+        },
+        "SCF": {
+          "type": "string",
+          "const": "Simplicity Calibration Flag",
+          "description": "Expansion of SCF acronym."
+        },
+        "TF": {
+          "type": "string",
+          "const": "Testing Framework",
+          "description": "Expansion of TF acronym."
+        }
+      },
+      "required": [
+        "SDA",
+        "ECG",
+        "SCF",
+        "TF"
+      ]
+    },
+    "evaluation_scope": {
+      "type": "string",
+      "description": "Defines what 'correctness' means for this run. 'external_truth' evaluates Y against an external evidence base X. 'document_internal_coherence' evaluates whether inferences and conclusions in Y (or in the document) are supported by the document-internal evidentiary claims treated as true under declared assumptions.",
+      "enum": [
+        "external_truth",
+        "document_internal_coherence"
+      ],
+      "default": "external_truth"
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Explicit assumptions governing the evaluation. Mandatory for document-internal mode to prevent confusion between internal coherence and real-world truth.",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    },
+    "x_internal_model": {
+      "type": "object",
+      "description": "Optional extracted representation of a single document used as implicit X in document-internal mode (facts/quotes/attributions/inferences/uncertainty markers). Recommended for auditability.",
+      "properties": {
+        "document_id": {
+          "type": "string"
+        },
+        "facts_claimed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fact": {
+                "type": "string"
+              },
+              "doc_span_ref": {
+                "type": "string"
+              },
+              "attribution": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "fact"
+            ]
+          }
+        },
+        "quotes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "quote": {
+                "type": "string"
+              },
+              "speaker": {
+                "type": "string"
+              },
+              "doc_span_ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "quote"
+            ]
+          }
+        },
+        "attributed_claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "claim": {
+                "type": "string"
+              },
+              "attribution": {
+                "type": "string"
+              },
+              "doc_span_ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "claim"
+            ]
+          }
+        },
+        "inferences": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "inference": {
+                "type": "string"
+              },
+              "basis": {
+                "type": "string"
+              },
+              "doc_span_ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "inference"
+            ]
+          }
+        },
+        "uncertainty_markers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "marker_text": {
+                "type": "string"
+              },
+              "doc_span_ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "marker_text"
+            ]
+          }
+        },
+        "evidence_gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gap": {
+                "type": "string"
+              },
+              "doc_span_ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "gap"
+            ]
+          }
+        }
+      }
+    },
+    "q_extracted": {
+      "type": "array",
+      "description": "Optional: implied or extracted sub-questions derived from a narrative document when Q is not explicitly provided or is multifaceted.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observations": {
+      "type": "array",
+      "description": "Actionable, source-linked observations explaining low scores, warnings, or failures. Each observation must cite relevant module/gate and anchor to X/doc spans where possible.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "observation_id": {
+            "type": "string",
+            "description": "Unique identifier, e.g., OBS-001."
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "fail",
+              "critical"
+            ],
+            "description": "Severity aligned to module status."
+          },
+          "linked_modules": {
+            "type": "array",
+            "description": "Modules/gates this observation explains (e.g., '3_evidence_density', '8_causal_evaluative_discipline').",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "finding": {
+            "type": "string",
+            "description": "Plain statement of what went wrong or what is missing."
+          },
+          "impact_on_score": {
+            "type": "string",
+            "description": "How this affected scoring (e.g., reduced coverage, triggered fail)."
+          },
+          "anchors": {
+            "type": "array",
+            "description": "Pointers into X. For external_truth use x_span_ref; for document_internal use doc_span_ref and section labels.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "anchor_text": {
+                  "type": "string"
+                },
+                "x_span_ref": {
+                  "type": "string"
+                },
+                "doc_span_ref": {
+                  "type": "string"
+                },
+                "anchor_type": {
+                  "type": "string",
+                  "enum": [
+                    "supporting",
+                    "contradicting",
+                    "missing_evidence",
+                    "context"
+                  ]
+                },
+                "notes": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "anchor_type"
+              ]
+            }
+          },
+          "recommended_fix": {
+            "type": "string",
+            "description": "Concrete remediation suggestion (e.g., add qualification, cite specific section, remove unsupported claim, add counter-case)."
+          },
+          "responsible_step": {
+            "type": "string",
+            "description": "Which workflow step would address this (e.g., 'claim_decomposition', 'entailment_anchoring', 'coverage_map', 'human_summary')."
+          }
+        },
+        "required": [
+          "observation_id",
+          "severity",
+          "linked_modules",
+          "finding",
+          "recommended_fix"
+        ]
+      }
+    },
+    "gate_observations": {
+      "type": "array",
+      "description": "Default per-gate observation ledger (fixed, avoids dynamic module keys). Must include entries for gates 1–9 in order.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gate_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9
+          },
+          "gate_label": {
+            "type": "string",
+            "description": "Human-readable name for the gate/module."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "WARNING",
+              "FAIL",
+              "DISAPPLIED"
+            ],
+            "description": "Gate outcome."
+          },
+          "score_impact": {
+            "type": "string",
+            "description": "Optional: brief note on how this gate affected overall scoring."
+          },
+          "observations": {
+            "type": "array",
+            "description": "Zero or more actionable observations for this gate. SHOULD be empty when PASS (unless informational).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "info",
+                    "warning",
+                    "fail",
+                    "critical"
+                  ]
+                },
+                "finding": {
+                  "type": "string"
+                },
+                "anchors": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "anchor_type": {
+                        "type": "string",
+                        "enum": [
+                          "X_SEG",
+                          "DOC_SEG"
+                        ]
+                      },
+                      "seg_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "seg_hash": {
+                        "type": "string",
+                        "pattern": "^sha256:[0-9a-fA-F]{64}$"
+                      },
+                      "char_range": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "quote_snip": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 240
+                      },
+                      "source_locator": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "anchor_type",
+                      "seg_id",
+                      "seg_hash",
+                      "quote_snip"
+                    ]
+                  }
+                },
+                "recommended_fix": {
+                  "type": "string"
+                },
+                "responsible_step": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "severity",
+                "finding",
+                "recommended_fix",
+                "anchors"
+              ]
+            }
+          },
+          "causal_sufficiency": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Gate 8 only: causal mechanism sufficiency test result. Null for other gates.",
+            "properties": {
+              "applies": {
+                "type": "boolean"
+              },
+              "outcomes_documented": {
+                "type": "boolean"
+              },
+              "mechanism_shown": {
+                "type": "boolean"
+              },
+              "mechanism_elements_present": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "actors_actions",
+                    "pathway_process",
+                    "intermediate_steps",
+                    "explicit_uncertainty"
+                  ]
+                }
+              },
+              "rule_outcome": {
+                "type": "string",
+                "enum": [
+                  "PASS",
+                  "WARNING",
+                  "FAIL"
+                ]
+              }
+            },
+            "required": [
+              "applies",
+              "outcomes_documented",
+              "mechanism_shown",
+              "rule_outcome"
+            ]
+          },
+          "gate_5_subchecks": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Gate 5 only: required sub-check scoring for Three-Layer Transparency and Global Coherence scan. Null for other gates.",
+            "properties": {
+              "layer_separation_score": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2
+              },
+              "global_coherence_scan_score": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2
+              },
+              "contradictions_found": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List contradictions/tensions identified, if any."
+              },
+              "resolution_action": {
+                "type": "string",
+                "enum": [
+                  "none_found",
+                  "resolved",
+                  "qualified",
+                  "refused",
+                  "not_applicable"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "layer_separation_score",
+              "global_coherence_scan_score",
+              "resolution_action"
+            ]
+          },
+          "gate_6_scope_sufficiency": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Gate 6 only: coverage sufficiency & scope discipline check for sets/enumerations. Null for other gates.",
+            "properties": {
+              "applies": {
+                "type": "boolean"
+              },
+              "sets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "set_id": {
+                      "type": "string"
+                    },
+                    "set_description": {
+                      "type": "string"
+                    },
+                    "representational_risk": {
+                      "type": "boolean",
+                      "description": "True if the output could be interpreted as representative/complete without qualification."
+                    },
+                    "satisfier_used": {
+                      "type": "string",
+                      "enum": [
+                        "scope_disclosure",
+                        "proportional_coverage",
+                        "omission_acknowledgement",
+                        "none"
+                      ]
+                    },
+                    "pass": {
+                      "type": "boolean"
+                    },
+                    "notes": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "set_id",
+                    "set_description",
+                    "representational_risk",
+                    "satisfier_used",
+                    "pass"
+                  ]
+                },
+                "minItems": 0
+              },
+              "overall_rule_outcome": {
+                "type": "string",
+                "enum": [
+                  "PASS",
+                  "WARNING",
+                  "FAIL"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "applies",
+              "overall_rule_outcome"
+            ]
+          }
+        },
+        "required": [
+          "gate_id",
+          "gate_label",
+          "status",
+          "observations"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "gate_id": {
+                  "const": 5
+                },
+                "status": {
+                  "enum": [
+                    "PASS",
+                    "WARNING",
+                    "FAIL"
+                  ]
+                }
+              },
+              "required": [
+                "gate_id",
+                "status"
+              ]
+            },
+            "then": {
+              "required": [
+                "gate_5_subchecks"
+              ],
+              "properties": {
+                "gate_5_subchecks": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "gate_id": {
+                  "const": 6
+                },
+                "status": {
+                  "enum": [
+                    "PASS",
+                    "WARNING",
+                    "FAIL"
+                  ]
+                }
+              },
+              "required": [
+                "gate_id",
+                "status"
+              ]
+            },
+            "then": {
+              "required": [
+                "gate_6_scope_sufficiency"
+              ],
+              "properties": {
+                "gate_6_scope_sufficiency": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "minItems": 9,
+      "maxItems": 9
+    },
+    "outputs": {
+      "type": "object",
+      "description": "Declares required companion outputs. Prose is produced alongside the JSON audit object (not embedded).",
+      "properties": {
+        "json_audit": {
+          "type": "boolean",
+          "const": true
+        },
+        "human_summary_prose": {
+          "type": "boolean",
+          "const": true
+        },
+        "prose_render_spec_version": {
+          "type": "string",
+          "minLength": 1,
+          "default": "HS-PROSE",
+          "description": "Deterministic prose rendering spec identifier."
+        }
+      },
+      "required": [
+        "json_audit",
+        "human_summary_prose",
+        "prose_render_spec_version"
+      ]
+    },
+    "verdict_mapping": {
+      "type": "object",
+      "description": "Mechanical derivation metadata for verdict/tier, including caps and escalation.",
+      "properties": {
+        "mechanical_rules_version": {
+          "type": "string",
+          "minLength": 1,
+          "default": "VT"
+        },
+        "ecg_adjusted_upward": {
+          "type": "boolean"
+        },
+        "ecg_severity_cap_applied": {
+          "type": "boolean"
+        },
+        "severity_escalation_targets": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "enum": [
+              3,
+              8
+            ]
+          },
+          "default": [
+            3,
+            8
+          ],
+          "description": "Gate IDs targeted for escalation when ECG is adjusted upward."
+        },
+        "severity_escalation_applied": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "enum": [
+              3,
+              8
+            ]
+          },
+          "description": "Gate IDs whose status was actually escalated due to ECG severity calibration."
+        },
+        "cap_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short reason for verdict/tier cap, if any."
+        }
+      },
+      "required": [
+        "mechanical_rules_version",
+        "ecg_adjusted_upward",
+        "ecg_severity_cap_applied"
+      ]
+    },
+    "assurance_level": {
+      "type": "string",
+      "enum": [
+        "AL-High",
+        "AL-Moderate",
+        "AL-Low"
+      ],
+      "description": "Epistemic Assurance Level derived mechanically from gate outcomes and ECG severity rules."
+    },
+    "segments_manifest_ref": {
+      "type": "object",
+      "description": "Reference to the canonical segmentation manifest for the evaluated evidence source (X or document). Stored as an external artefact keyed by X_id/doc_id. Orchestration note: This field is OPTIONAL for one-shot sessions. It is recommended in production orchestration for reproducibility (manifesting, deterministic segmentation/normalisation), but should not be treated as a scoring gate in one-shot usage.",
+      "properties": {
+        "manifest_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "segmentation_rules_version": {
+          "type": "string",
+          "minLength": 1,
+          "default": "SEG"
+        },
+        "normalization_rules_version": {
+          "type": "string",
+          "minLength": 1,
+          "default": "NORM"
+        }
+      },
+      "required": [
+        "manifest_id",
+        "source_id",
+        "segmentation_rules_version",
+        "normalization_rules_version"
+      ]
+    },
+    "claim_type_inventory": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Optional inventory of claim types detected in Y to support ECG posture mismatch checks.",
+      "properties": {
+        "counts": {
+          "type": "object",
+          "properties": {
+            "factual": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "inferential": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "evaluative": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "predictive": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "factual",
+            "inferential",
+            "evaluative",
+            "predictive"
+          ]
+        },
+        "dominant_claim_type": {
+          "type": "string",
+          "enum": [
+            "factual",
+            "inferential",
+            "evaluative",
+            "predictive",
+            "mixed"
+          ]
+        },
+        "posture_ecg_mismatch_flag": {
+          "type": "boolean",
+          "description": "True if Y posture suggests a higher ECG class than governing_class without a recorded adjustment."
+        }
+      },
+      "required": [
+        "counts",
+        "dominant_claim_type",
+        "posture_ecg_mismatch_flag"
+      ]
+    },
+    "numeric_scores": {
+      "type": "object",
+      "description": "Deterministic numeric scoring per SCORE. NIS normalizes penalties across only applicable gates (PASS/WARNING/FAIL), excluding DISAPPLIED gates.",
+      "properties": {
+        "nis": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Numeric Integrity Score (0–100) per SCORE."
+        },
+        "raw_penalty": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Σ penalties across applicable gates (PASS=0; WARNING/FAIL per class)."
+        },
+        "max_penalty": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Σ maximum penalties across applicable gates (critical=40; secondary=30)."
+        },
+        "score_rules_version": {
+          "type": "string",
+          "const": "SCORE",
+          "description": "Scoring ruleset identifier."
+        },
+        "penalty_constants": {
+          "type": "object",
+          "description": "Normative constants for SCORE. Included for transparency; implementations must use these values.",
+          "properties": {
+            "critical_warning": {
+              "type": "integer",
+              "const": 15
+            },
+            "critical_fail": {
+              "type": "integer",
+              "const": 40
+            },
+            "secondary_warning": {
+              "type": "integer",
+              "const": 10
+            },
+            "secondary_fail": {
+              "type": "integer",
+              "const": 30
+            },
+            "critical_max": {
+              "type": "integer",
+              "const": 40
+            },
+            "secondary_max": {
+              "type": "integer",
+              "const": 30
+            }
+          },
+          "required": [
+            "critical_warning",
+            "critical_fail",
+            "secondary_warning",
+            "secondary_fail",
+            "critical_max",
+            "secondary_max"
+          ]
+        },
+        "breakdown": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Per-gate scoring breakdown. Must include all and only applicable gates (i.e., those with PASS/WARNING/FAIL).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gate": {
+                "type": "string",
+                "minLength": 1
+              },
+              "severity_class": {
+                "type": "string",
+                "enum": [
+                  "critical",
+                  "secondary"
+                ]
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "PASS",
+                  "WARNING",
+                  "FAIL"
+                ]
+              },
+              "penalty": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "max": {
+                "type": "integer",
+                "enum": [
+                  30,
+                  40
+                ]
+              }
+            },
+            "required": [
+              "gate",
+              "severity_class",
+              "outcome",
+              "penalty",
+              "max"
+            ]
+          }
+        },
+        "formula": {
+          "type": "string",
+          "const": "NIS = round(100 * (1 - raw_penalty / max_penalty))",
+          "description": "Recorded formula for transparency; normative computation defined by SCORE."
+        },
+        "rounding": {
+          "type": "string",
+          "const": "nearest_integer",
+          "description": "Rounding mode used by SCORE."
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional implementation note (non-normative)."
+        }
+      },
+      "required": [
+        "nis",
+        "raw_penalty",
+        "max_penalty",
+        "score_rules_version",
+        "penalty_constants",
+        "breakdown",
+        "formula",
+        "rounding"
+      ]
+    },
+    "claim_posture_assessment": {
+      "type": "object",
+      "description": "Claim-Posture Dominance (CPD-HSF) assessment. Determines ECG_min(Y) from claim posture and enforces an ECG floor regardless of evaluation scope.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether CPD-HSF posture scan and floor enforcement was applied."
+        },
+        "ecg_min_y": {
+          "type": "string",
+          "enum": [
+            "E1",
+            "E2",
+            "E3",
+            "E4",
+            "E5",
+            "E6"
+          ],
+          "description": "Minimum ECG class implied by the dominant claim posture detected in Y."
+        },
+        "triggers": {
+          "type": "array",
+          "description": "Posture triggers detected in Y that justify ecg_min_y.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "CAUSAL_DETERMINISTIC",
+              "POPULATION_SCALE",
+              "SYSTEMIC_RISK",
+              "ACTION_RELEVANT",
+              "INSTITUTIONAL_MISCONDUCT",
+              "CATASTROPHIC_OUTCOME",
+              "HIGH_IMPACT_PREDICTIVE",
+              "DESCRIPTIVE_BOUNDED_ONLY"
+            ]
+          }
+        },
+        "trigger_anchors": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Strict anchors (Y_SEG or DOC_SEG) evidencing the triggers.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "anchor_type": {
+                "type": "string",
+                "enum": [
+                  "Y_SEG",
+                  "DOC_SEG"
+                ]
+              },
+              "seg_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "seg_hash": {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-fA-F]{64}$"
+              },
+              "char_range": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "quote_snip": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240
+              },
+              "source_locator": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "anchor_type",
+              "seg_id",
+              "seg_hash",
+              "quote_snip"
+            ]
+          }
+        },
+        "floor_applied": {
+          "type": "boolean",
+          "description": "True if ECG(Q|X) was raised or prevented from being lowered due to CPD-HSF."
+        },
+        "coherence_only_cap_applied": {
+          "type": "boolean",
+          "description": "True if document_internal confidence cap logic was applied."
+        },
+        "cap_rationale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short rationale if coherence-only cap applied."
+        },
+        "posture_safety_bundle_present": {
+          "type": "boolean",
+          "description": "True if Y contains internal safeguards sufficient to permit high confidence in document_internal for ECG_min_y>=E5 (uncertainty bounds; bounded populations/denominators where applicable; non-action guardrails; counter-hypotheses). (: MUST be consistent with safety_bundle_components per mechanical rules.)"
+        },
+        "safety_bundle_components": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uncertainty_bounds_explicit",
+            "population_bounds_or_denominators",
+            "non_action_or_safety_guardrails",
+            "counter_hypotheses_present",
+            "component_applicability"
+          ],
+          "properties": {
+            "uncertainty_bounds_explicit": {
+              "type": "boolean",
+              "description": "True if Y includes explicit uncertainty bounds / limitations consistent with claim posture (e.g., non-causality, preliminary, requires replication)."
+            },
+            "population_bounds_or_denominators": {
+              "type": "boolean",
+              "description": "True if population-scale claims are bounded with denominators/sampling frame OR explicitly limited/retracted; otherwise false."
+            },
+            "non_action_or_safety_guardrails": {
+              "type": "boolean",
+              "description": "True if Y includes non-action / safety guardrails proportionate to harm/actionability (domain-general)."
+            },
+            "counter_hypotheses_present": {
+              "type": "boolean",
+              "description": "True if Y acknowledges at least one plausible alternative explanation and/or counter-position, with discriminating evidence notes."
+            },
+            "component_applicability": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "population_bounds_or_denominators"
+              ],
+              "properties": {
+                "population_bounds_or_denominators": {
+                  "type": "boolean",
+                  "description": "If false, population bounds/denominators are not applicable because no population-scale trigger is present."
+                }
+              },
+              "description": "Applicability flags to avoid over-demanding components when not triggered by claim posture."
+            },
+            "anchors": {
+              "type": "array",
+              "description": "Evidence anchors for safety bundle components (Y_SEG or DOC_SEG). Provide at least one anchor per component marked true.",
+              "items": {
+                "$ref": "#/$defs/anchor_ref"
+              },
+              "minItems": 0
+            }
+          },
+          "description": "Structured safety bundle assessment to support CPD-HSF confidence caps and reduce evaluator variance."
+        }
+      },
+      "required": [
+        "trigger_anchors",
+        "floor_applied",
+        "ecg_min_y",
+        "safety_bundle_components",
+        "coherence_only_cap_applied",
+        "triggers",
+        "enabled",
+        "posture_safety_bundle_present"
+      ]
+    },
+    "outputs_profile": {
+      "type": "string",
+      "enum": [
+        "MIN",
+        "STANDARD",
+        "FULL"
+      ],
+      "description": "Controls required verbosity of emitted artifacts. MIN=compact; STANDARD=human-summary + targeted snippets + NIS breakdown; FULL=complete artifacts including optional raw X/Y and full manifests."
+    },
+    "privacy_and_compaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "echo_inputs",
+        "allow_excerpt",
+        "excerpt_max_chars",
+        "snippets_policy"
+      ],
+      "properties": {
+        "echo_inputs": {
+          "type": "string",
+          "enum": [
+            "forbidden",
+            "allowed",
+            "required"
+          ],
+          "description": "Policy for echoing raw inputs X/Y in output JSON."
+        },
+        "allow_excerpt": {
+          "type": "boolean",
+          "description": "Whether excerpts/snippets from X/Y may be included."
+        },
+        "excerpt_max_chars": {
+          "type": "integer",
+          "minimum": 80,
+          "maximum": 2000,
+          "description": "Maximum total characters per excerpt/snippet in STANDARD/FULL outputs."
+        },
+        "snippets_policy": {
+          "type": "string",
+          "enum": [
+            "issues_only",
+            "always",
+            "none"
+          ],
+          "description": "issues_only=include snippets only for deficiencies (WARN/FAIL gates, unsupported/underspecified claims, false safety-bundle components, posture triggers, missing elements)."
+        },
+        "handles_only_ok": {
+          "type": "boolean",
+          "description": "If true, raw X/Y may be omitted when x_handle/y_handle provided and segments_manifest_ref is present."
+        }
+      }
+    },
+    "handles_manifest_entries": {
+      "type": "array",
+      "description": "Mapping table for compact handle IDs to handle metadata. Required when inputs.x_handle or inputs.y_handle is a string. Orchestration note: OPTIONAL in one-shot usage; recommended when an external orchestration layer can reliably retrieve, store, and version inputs.",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "handle_id",
+          "content_hash",
+          "byte_len",
+          "segmentation_rules_version",
+          "normalization_rules_version"
+        ],
+        "properties": {
+          "handle_id": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120,
+            "pattern": "^[A-Za-z0-9._\\-:]+$",
+            "description": "Compact handle ID referencing an entry in handles_manifest_entries."
+          },
+          "content_hash": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "byte_len": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "source_ref": {
+            "type": "string"
+          },
+          "retrieval_method": {
+            "type": "string",
+            "enum": [
+              "user_provided",
+              "retrieved_by_evaluator",
+              "unknown"
+            ]
+          },
+          "segmentation_rules_version": {
+            "type": "string"
+          },
+          "normalization_rules_version": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "overall_classification_code": {
+      "type": "string",
+      "enum": [
+        "HC",
+        "MC",
+        "LC",
+        "INVALID"
+      ],
+      "description": "Normalized code for verdict to avoid casing/format drift. INVALID reserved for validator/parse failures."
+    },
+    "invalid_reason": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Required when verdict_code=INVALID. Brief reason (e.g., schema violation, missing required fields)."
+    }
+  },
+  "required": [
+    "claim_posture_assessment",
+    "entity_lock",
+    "verdict",
+    "evaluator_config",
+    "ecg",
+    "assurance_level",
+    "tf_calibration",
+    "outputs_profile",
+    "assurance_level",
+    "concentration_check",
+    "coverage",
+    "source_grounded_correctness",
+    "acronym_expansions",
+    "oip_tf_version",
+    "verdict_code",
+    "inputs",
+    "outputs",
+    "source_data_assessment",
+    "gate_observations",
+    "verdict_mapping",
+    "privacy_and_compaction",
+    "prompt_templates",
+    "evidence_density_ok",
+    "numeric_scores"
+  ],
+  "description": "adds source-grounded evaluation inputs (X, Q, Y), SDA(X), ECG(Q|X) adjustment fields, claim entailment tables, and evaluator separation metadata to mitigate self-regard risk. Conditional input rules (): if inputs.x_mode=='required', inputs.X must be present and non-empty. If inputs.x_mode=='none', inputs.X must be an empty string if present. adds 'human_summary' as a non-expert derived view. It is recommended (SHOULD) for stakeholder-facing reports; optional for batch-only workflows. adds mandatory acronym expansions and requires SDA/ECG/SCF labels to be carried within outputs for non-expert readability. introduces 'document_internal' x_mode for single-document evaluations where the document itself is treated as X under explicit assumptions. In document-internal mode, evaluation_scope must be 'document_internal_coherence' and assumptions must be provided. requires a Human Summary safeguard line in document-internal evaluations to prevent readers from mistaking internal coherence for externally verified truth. adds 'observations' for actionable, source-anchored findings linked to low scores/warnings/fails. Implementations SHOULD populate observations whenever any module status is WARNING/FAIL/CRITICAL, and MUST when overall classification indicates FAIL. adds 'gate_observations' as a mandatory fixed-length (9) ledger of per-gate observations and outcomes, avoiding dynamic module key enforcement issues. Implementations SHOULD map existing 'modules' statuses into this ledger and provide actionable findings even for PASS gates if useful. adds: (a) required dual-output contract (JSON + prose Human Summary), (b) explicit ECG adjustment fields and severity calibration metadata, (c) Gate 8 causal mechanism sufficiency test fields, and (d) required tier + verdict mapping fields with basic conditional constraints. removes legacy tier terminology and uses assurance_level (AL-High/AL-Moderate/AL-Low) as the sole outcome field. It also hardens span mapping by requiring strict anchor objects with content-addressed segment IDs and hashes, and adds segments_manifest_ref for canonical segmentation artefacts. adds ECG drift controls: rule-bound classification confidence, decomposition recommendation flag, and strict-anchor justification_anchors requiring Q/Y and (where relevant) X/DOC anchoring for ECG adjustments. Also adds optional claim_type_inventory to detect posture/ECG mismatches. adds SCORE Numeric Integrity Score (NIS) computed deterministically from gate outcomes, with critical/secondary penalties and ECG-modulated applicability normalization. Assurance remains decisive. integrates CPD-HSF: derive ECG_min(Y) from Y claim posture; prohibit downward ECG adjustment below ECG_min(Y) regardless of evaluation scope; enforce coherence-only confidence cap in document_internal when ECG_min(Y)>=E5 unless internal safety bundle is present. update: replaces posture_safety_bundle_present boolean-only practice with structured safety_bundle_components to reduce evaluator variance; adds mechanical consistency constraints between component booleans and bundle_present. update: introduces outputs_profile (MIN/STANDARD/FULL) and privacy_and_compaction controls to reduce token overhead without changing scoring logic. Allows omission of raw X/Y when content handles + segment manifests are referenced. STANDARD profile MUST include full human_summary_prose, targeted issue snippets, and full NIS breakdown. update: adds validator-gate constraints to make STANDARD compaction enforceable without tool-specific prompts. When outputs_profile=STANDARD, echo_inputs must be forbidden and raw inputs.X/inputs.Y MUST be absent; x_handle and y_handle MUST be present; privacy_and_compaction MUST include allow_excerpt and excerpt_max_chars. update: permits x_handle/y_handle to be emitted as compact string IDs (to reduce token overhead) OR as full handle objects. When string IDs are used, a handles_manifest_entries array MUST be present containing the corresponding handle metadata (hash, byte length, segmentation/normalisation versions). Note: JSON Schema cannot perfectly enforce that the ID values match manifest entry keys; implementations SHOULD validate that x_handle/y_handle IDs are present in handles_manifest_entries.handle_id. update: removes legacy conditional logic referencing undefined field 'classification'; tightens verdict to enum-only; adds verdict_code (HC/MC/LC/INVALID) with mechanical mapping constraints.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "x_mode": {
+                "const": "required"
+              }
+            }
+          }
+        },
+        "required": [
+          "inputs"
+        ]
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "required": [
+              "X"
+            ],
+            "properties": {
+              "X": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "x_mode": {
+                "const": "reasoning_quality_only"
+              }
+            }
+          }
+        },
+        "required": [
+          "inputs"
+        ]
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "X": {
+                "type": "string",
+                "maxLength": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "x_mode": {
+                "const": "document_internal"
+              }
+            }
+          }
+        },
+        "required": [
+          "inputs"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evaluation_scope": {
+            "const": "document_internal_coherence"
+          },
+          "assumptions": {
+            "minItems": 1
+          },
+          "inputs": {
+            "properties": {
+              "X": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "X"
+            ]
+          }
+        },
+        "required": [
+          "evaluation_scope",
+          "assumptions"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "x_mode": {
+                "const": "document_internal"
+              }
+            }
+          }
+        },
+        "required": [
+          "inputs"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "properties": {
+              "inputs": {
+                "required": [
+                  "Q"
+                ]
+              }
+            }
+          },
+          {
+            "required": [
+              "q_extracted"
+            ],
+            "properties": {
+              "q_extracted": {
+                "minItems": 1
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evaluation_scope": {
+            "const": "document_internal_coherence"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "human_summary": {
+            "required": [
+              "scope_safeguard_line"
+            ],
+            "properties": {
+              "scope_safeguard_line": {
+                "allOf": [
+                  {
+                    "type": "string",
+                    "minLength": 20
+                  },
+                  {
+                    "pattern": "(?i)(internal|coherence|justification)"
+                  },
+                  {
+                    "pattern": "(?i)(does not|not)\\s+(independently\\s+)?(verify|confirm)"
+                  },
+                  {
+                    "pattern": "(?i)(real-world|external)\\s+truth"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verdict_mapping": {
+            "properties": {
+              "ecg_severity_cap_applied": {
+                "const": true
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assurance_level": {
+            "const": "AL-Low"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "assurance_level": {
+            "const": "AL-High"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verdict_mapping": {
+            "properties": {
+              "ecg_severity_cap_applied": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "ecg": {
+          "properties": {
+            "justification_anchors": {
+              "allOf": [
+                {
+                  "contains": {
+                    "properties": {
+                      "anchor_type": {
+                        "const": "Q_SEG"
+                      }
+                    }
+                  }
+                },
+                {
+                  "contains": {
+                    "properties": {
+                      "anchor_type": {
+                        "const": "Y_SEG"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ecg": {
+            "properties": {
+              "adjustment_direction": {
+                "enum": [
+                  "upward",
+                  "downward"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ecg": {
+            "properties": {
+              "justification_anchors": {
+                "anyOf": [
+                  {
+                    "contains": {
+                      "properties": {
+                        "anchor_type": {
+                          "const": "X_SEG"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "anchor_type": {
+                          "const": "DOC_SEG"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ecg": {
+            "properties": {
+              "classification_confidence": {
+                "const": "Low"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ecg": {
+            "properties": {
+              "decomposition_recommended": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "x_mode": {
+                "const": "document_internal"
+              }
+            }
+          },
+          "claim_posture_assessment": {
+            "properties": {
+              "ecg_min_y": {
+                "enum": [
+                  "E5",
+                  "E6"
+                ]
+              },
+              "posture_safety_bundle_present": {
+                "const": false
+              }
+            },
+            "required": [
+              "ecg_min_y",
+              "posture_safety_bundle_present"
+            ]
+          }
+        },
+        "required": [
+          "inputs",
+          "claim_posture_assessment"
+        ]
+      },
+      "then": {
+        "properties": {
+          "verdict": {
+            "not": {
+              "const": "high confidence"
+            }
+          },
+          "claim_posture_assessment": {
+            "properties": {
+              "coherence_only_cap_applied": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "claim_posture_assessment": {
+            "properties": {
+              "triggers": {
+                "contains": {
+                  "enum": [
+                    "CAUSAL_DETERMINISTIC",
+                    "POPULATION_SCALE",
+                    "ACTION_RELEVANT",
+                    "SYSTEMIC_RISK",
+                    "CATASTROPHIC_OUTCOME"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "triggers"
+            ]
+          }
+        },
+        "required": [
+          "claim_posture_assessment"
+        ]
+      },
+      "then": {
+        "properties": {
+          "claim_posture_assessment": {
+            "properties": {
+              "ecg_min_y": {
+                "const": "E6"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "claim_posture_assessment": {
+                "properties": {
+                  "safety_bundle_components": {
+                    "properties": {
+                      "component_applicability": {
+                        "properties": {
+                          "population_bounds_or_denominators": {
+                            "const": true
+                          }
+                        }
+                      },
+                      "uncertainty_bounds_explicit": {
+                        "const": true
+                      },
+                      "population_bounds_or_denominators": {
+                        "const": true
+                      },
+                      "non_action_or_safety_guardrails": {
+                        "const": true
+                      },
+                      "counter_hypotheses_present": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "component_applicability",
+                      "uncertainty_bounds_explicit",
+                      "population_bounds_or_denominators",
+                      "non_action_or_safety_guardrails",
+                      "counter_hypotheses_present"
+                    ]
+                  }
+                },
+                "required": [
+                  "safety_bundle_components"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "claim_posture_assessment": {
+                "properties": {
+                  "posture_safety_bundle_present": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_posture_assessment": {
+                "properties": {
+                  "safety_bundle_components": {
+                    "properties": {
+                      "component_applicability": {
+                        "properties": {
+                          "population_bounds_or_denominators": {
+                            "const": false
+                          }
+                        }
+                      },
+                      "uncertainty_bounds_explicit": {
+                        "const": true
+                      },
+                      "non_action_or_safety_guardrails": {
+                        "const": true
+                      },
+                      "counter_hypotheses_present": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "component_applicability",
+                      "uncertainty_bounds_explicit",
+                      "non_action_or_safety_guardrails",
+                      "counter_hypotheses_present"
+                    ]
+                  }
+                },
+                "required": [
+                  "safety_bundle_components"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "claim_posture_assessment": {
+                "properties": {
+                  "posture_safety_bundle_present": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_posture_assessment": {
+                "properties": {
+                  "safety_bundle_components": {
+                    "anyOf": [
+                      {
+                        "properties": {
+                          "uncertainty_bounds_explicit": {
+                            "const": false
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "non_action_or_safety_guardrails": {
+                            "const": false
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "counter_hypotheses_present": {
+                            "const": false
+                          }
+                        }
+                      },
+                      {
+                        "allOf": [
+                          {
+                            "properties": {
+                              "component_applicability": {
+                                "properties": {
+                                  "population_bounds_or_denominators": {
+                                    "const": true
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "population_bounds_or_denominators": {
+                                "const": false
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "safety_bundle_components"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "claim_posture_assessment": {
+                "properties": {
+                  "posture_safety_bundle_present": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "if": {
+        "properties": {
+          "outputs_profile": {
+            "enum": [
+              "MIN",
+              "STANDARD",
+              "FULL"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "required": [
+                      "X"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "x_handle"
+                    ]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "required": [
+                      "Y"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "y_handle"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outputs_profile": {
+            "const": "STANDARD"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "outputs",
+          "numeric_scores",
+          "privacy_and_compaction"
+        ],
+        "properties": {
+          "privacy_and_compaction": {
+            "properties": {
+              "echo_inputs": {
+                "const": "forbidden"
+              },
+              "snippets_policy": {
+                "const": "issues_only"
+              }
+            }
+          },
+          "outputs": {
+            "properties": {
+              "json_audit": {
+                "const": true
+              },
+              "human_summary_prose": {
+                "const": true
+              }
+            },
+            "required": [
+              "json_audit",
+              "human_summary_prose"
+            ]
+          },
+          "numeric_scores": {
+            "required": [
+              "nis",
+              "raw_penalty",
+              "max_penalty",
+              "breakdown"
+            ],
+            "properties": {
+              "breakdown": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outputs_profile": {
+            "const": "FULL"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "outputs",
+          "numeric_scores",
+          "privacy_and_compaction"
+        ],
+        "properties": {
+          "outputs": {
+            "properties": {
+              "json_audit": {
+                "const": true
+              },
+              "human_summary_prose": {
+                "const": true
+              }
+            },
+            "required": [
+              "json_audit",
+              "human_summary_prose"
+            ]
+          },
+          "numeric_scores": {
+            "required": [
+              "nis",
+              "raw_penalty",
+              "max_penalty",
+              "breakdown"
+            ],
+            "properties": {
+              "breakdown": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outputs_profile": {
+            "const": "MIN"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "outputs",
+          "numeric_scores",
+          "privacy_and_compaction"
+        ],
+        "properties": {
+          "privacy_and_compaction": {
+            "properties": {
+              "echo_inputs": {
+                "enum": [
+                  "forbidden",
+                  "allowed"
+                ]
+              },
+              "snippets_policy": {
+                "enum": [
+                  "none",
+                  "issues_only"
+                ]
+              }
+            }
+          },
+          "outputs": {
+            "properties": {
+              "json_audit": {
+                "const": true
+              }
+            },
+            "required": [
+              "json_audit"
+            ]
+          },
+          "numeric_scores": {
+            "required": [
+              "nis",
+              "raw_penalty",
+              "max_penalty"
+            ],
+            "properties": {
+              "breakdown": {
+                "type": "array"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outputs_profile": {
+            "const": "STANDARD"
+          }
+        },
+        "required": [
+          "outputs_profile"
+        ]
+      },
+      "then": {
+        "required": [
+          "privacy_and_compaction",
+          "inputs",
+          "numeric_scores",
+          "outputs"
+        ],
+        "properties": {
+          "privacy_and_compaction": {
+            "required": [
+              "echo_inputs",
+              "allow_excerpt",
+              "excerpt_max_chars",
+              "snippets_policy"
+            ],
+            "properties": {
+              "echo_inputs": {
+                "const": "forbidden"
+              },
+              "snippets_policy": {
+                "const": "issues_only"
+              }
+            }
+          },
+          "inputs": {
+            "required": [
+              "x_handle",
+              "y_handle"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "X"
+                  ]
+                },
+                {
+                  "required": [
+                    "Y"
+                  ]
+                }
+              ]
+            }
+          },
+          "numeric_scores": {
+            "required": [
+              "nis",
+              "raw_penalty",
+              "max_penalty",
+              "breakdown"
+            ]
+          },
+          "outputs": {
+            "required": [
+              "json_audit",
+              "human_summary_prose"
+            ],
+            "properties": {
+              "json_audit": {
+                "const": true
+              },
+              "human_summary_prose": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "privacy_and_compaction": {
+            "properties": {
+              "echo_inputs": {
+                "const": "forbidden"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "X"
+                  ]
+                },
+                {
+                  "required": [
+                    "Y"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outputs_profile": {
+            "const": "STANDARD"
+          },
+          "inputs": {
+            "properties": {
+              "x_handle": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "handles_manifest_entries"
+        ],
+        "properties": {
+          "handles_manifest_entries": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outputs_profile": {
+            "const": "STANDARD"
+          },
+          "inputs": {
+            "properties": {
+              "y_handle": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "handles_manifest_entries"
+        ],
+        "properties": {
+          "handles_manifest_entries": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "high confidence"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "overall_classification_code": {
+            "const": "HC"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "medium confidence"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "overall_classification_code": {
+            "const": "MC"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "low confidence"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "overall_classification_code": {
+            "const": "LC"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "overall_classification_code": {
+            "const": "HC"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verdict": {
+            "const": "high confidence"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "overall_classification_code": {
+            "const": "MC"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verdict": {
+            "const": "medium confidence"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "overall_classification_code": {
+            "const": "LC"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verdict": {
+            "const": "low confidence"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "overall_classification_code": {
+            "const": "INVALID"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "invalid_reason"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "x_mode": {
+                "const": "reasoning_quality_only"
+              }
+            },
+            "required": [
+              "x_mode"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "tf_calibration": {
+            "properties": {
+              "disapplied_checks": {
+                "type": "array",
+                "contains": {
+                  "enum": [
+                    "source_data_assessment",
+                    "source_hierarchy",
+                    "evidence_density_ok",
+                    "entailment",
+                    "coverage_vs_x"
+                  ]
+                }
+              },
+              "reg_intensity_checks": {
+                "type": "array",
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "disapplied_checks"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$id": "https://oip.tf/schema/oip-tf-release-1.json",
+  "version": ".-regnames-tier-vs-assurance-safety-alignment-xmode-xrequired-nohash-qyimplicit",
+  "$defs": {
+    "anchor_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "anchor_type",
+        "seg_id",
+        "seg_hash",
+        "quote_snip"
+      ],
+      "properties": {
+        "anchor_type": {
+          "type": "string",
+          "enum": [
+            "Q_SEG",
+            "X_SEG",
+            "Y_SEG",
+            "DOC_SEG"
+          ]
+        },
+        "seg_id": {
+          "type": "string"
+        },
+        "seg_hash": {
+          "type": "string"
+        },
+        "quote_snip": {
+          "type": "string",
+          "maxLength": 220
+        }
+      }
+    }
+  },
+  "oip_tf_version": "OIP-TF Release 1",
+  "schema_change_notes": [
+    "Gate 2 output uses Tier terminology (tier_score) aligned to OIP-Reg Source Tiering.",
+    "Assurance Level (assurance_level) is reserved for the final assurance category derived from overall verdict/outcomes.",
+    "Added documentary alignment note for posture safety bundle parity with OIP-Reg (Item 5).",
+    "Made inputs.X structurally required by contract; x_mode='none' requires X==\"\" exactly; prompt template updated accordingly.",
+    "De-scoped cryptographic content hashing from TF one-shot sessions; content_hash is optional and positioned as orchestration-layer recommendation.",
+    ": Clarified input modes for Q and Y. Added q_mode/y_mode with explicit vs implicit options; requires disclosure fields q_derived/y_derived when implicit; added scope-drift caveats to reduce ambiguity in document-internal runs.",
+    {
+      "date": "2025-12-28",
+      "change": "Enforcement upgrades: added ECG terminal rule field and canonical escalation order const; enforced gate_profile by governing_class + overrides; added Gate 5 subcheck scoring (layer separation + global coherence) and Gate 6 scope sufficiency subcheck objects with conditional requirements."
+    }
+  ],
+  "internal_consistency_check": {
+    "old_keys_remaining_top_level": [],
+    "old_keys_remaining_applicability": [],
+    "status": "ok"
+  },
+  "terminology_check": {
+    "gate2_field": "tier_score",
+    "final_assurance_field": "assurance_level",
+    "note": "Tier reflects source tiering; Assurance Level reflects final aggregate assurance category."
+  },
+  "alignment_notes": {
+    "item_5_posture_safety_bundle_parity": {
+      "purpose": "Align OIP-TF posture/safety bundle concepts with OIP-Reg high-stakes posture controls without changing scoring logic.",
+      "tf_components": [
+        "claim_posture_assessment.triggers",
+        "claim_posture_assessment.posture_safety_bundle_present",
+        "claim_posture_assessment.safety_bundle_components",
+        "ecg.adjusted_class / ecg_min_y escalation effects"
+      ],
+      "reg_analogue_controls": [
+        "High-stakes posture escalation (RIM profile HIGH/CRITICAL)",
+        "Dialectical safeguard intensification under high stakes",
+        "Requirement to bound population claims and label uncertainty",
+        "Non-action / safety guardrails for actionable content"
+      ],
+      "conceptual_bundle_components": [
+        "population_bounds_or_denominators",
+        "uncertainty_bounds_explicit",
+        "non_action_or_safety_guardrails",
+        "counter_hypotheses_present"
+      ],
+      "interpretation_note": "TF records presence/absence of safety-bundle elements and may escalate severity or cap confidence; Reg enforces corresponding behavioural and presentation constraints. The two are intended to be semantically aligned for orchestration and audit comparability.",
+      "non_change_clause": "This note is documentary only; it does not modify gate thresholds, penalties, or verdict mapping."
+    }
+  },
+  "input_contract": {
+    "x_mode_rules": {
+      "principle": "X MUST exist structurally in inputs for all runs; content may be empty only when x_mode == 'none'.",
+      "rules": [
+        {
+          "if": {
+            "inputs.x_mode": "none"
+          },
+          "then": {
+            "inputs.X": "MUST_EXIST_AND_EQUAL_EMPTY_STRING"
+          }
+        },
+        {
+          "if": {
+            "inputs.x_mode": "document_internal"
+          },
+          "then": {
+            "inputs.X": "MUST_EXIST_AND_BE_NON_EMPTY_STRING_OR_HANDLE"
+          }
+        },
+        {
+          "if": {
+            "inputs.x_mode": "required"
+          },
+          "then": {
+            "inputs.X": "MUST_EXIST_AND_BE_NON_EMPTY_STRING_OR_HANDLE"
+          }
+        },
+        {
+          "if": {
+            "inputs.x_mode": "handle"
+          },
+          "then": {
+            "inputs.X": "MUST_EXIST_AND_EQUAL_EMPTY_STRING",
+            "inputs.x_handle": "MUST_EXIST"
+          }
+        }
+      ],
+      "validator_intent": "Validators should treat missing inputs.X as a hard error. For handle mode, prefer x_handle with manifest; X remains empty."
+    },
+    "q_mode_rules": {
+      "explicit": "User/tool supplies Q in inputs.Q. Evaluator must not rewrite Q (except minimal normalization).",
+      "implicit": "Evaluator derives Q from the document(s) and MUST populate inputs.q_derived, inputs.q_derivation_basis, and inputs.q_scope_drift_caveat. Evaluator must state evaluation scope boundary and note drift risk."
+    },
+    "y_mode_rules": {
+      "explicit": "User/tool supplies Y in inputs.Y exactly as produced; evaluator must not rewrite.",
+      "implicit": "Evaluator derives Y (e.g., extracted claims) and MUST populate inputs.y_derived, inputs.y_derivation_basis, and inputs.y_scope_drift_caveat. Evaluator must note abstraction/omission risk."
+    }
+  },
+  "prompt_templates": {
+    "user_prompt_for_X": "Provide SOURCE DATA X. Always include the field X in inputs.\n- If x_mode = 'none': set X to the empty string exactly \"\" and do not provide source excerpts.\n- If x_mode = 'required' or 'document_internal': provide X verbatim (or provide x_handle + manifest if configured), labelled by sections.\n- If x_mode = 'handle': set X to \"\" and provide x_handle (and manifest reference).\nDo not include the question or the answer in X.",
+    "user_prompt_for_Q": "Provide QUESTION Q (task prompt) separately from X and Y. If q_mode=implicit, do NOT ask the user for Q; derive and disclose q_derived and caveat.",
+    "user_prompt_for_Y": "Provide ANSWER/OUTPUT Y exactly as produced (verbatim). Do not revise it. If y_mode=implicit, derive and disclose y_derived and caveat."
+  },
+  "orchestration_recommendations": {
+    "content_hashing": {
+      "status": "recommended_for_production_orchestration_only",
+      "one_shot_policy": "Hashing is NOT required for one-shot LLM sessions. Evaluators may omit content_hash entirely in manifests.",
+      "recommended_hash": "sha256(content_normalized)",
+      "recommended_location": "Orchestration layer / retrieval subsystem, not the TF audit schema.",
+      "purpose": [
+        "deduplication",
+        "integrity verification",
+        "cache keys",
+        "reproducibility for multi-run pipelines"
+      ]
+    }
+  },
+  "handles_manifest_spec": {
+    "fields": {
+      "handle_id": {
+        "required": true,
+        "type": "string"
+      },
+      "source_ref": {
+        "required": true,
+        "type": "string"
+      },
+      "retrieval_method": {
+        "required": true,
+        "type": "string"
+      },
+      "byte_len": {
+        "required": false,
+        "type": "integer"
+      },
+      "content_hash": {
+        "required": false,
+        "type": "string",
+        "note": "Optional; recommend sha256 in orchestration. Do not require in one-shot sessions."
+      },
+      "segmentation_rules_version": {
+        "required": false,
+        "type": "string"
+      },
+      "normalization_rules_version": {
+        "required": false,
+        "type": "string"
+      }
+    },
+    "one_shot_minimum": [
+      "handle_id",
+      "source_ref",
+      "retrieval_method"
+    ]
+  },
+  "execution_profile": {
+    "name": "Hybrid Executable TF v3 (Intensity ≠ Outcome; NIS-Closed)",
+    "objective": "Separate gate applied_intensity (policy) from gate result (PASS/WARNING/FAIL) produced by evaluation. Provide deterministic extraction plus judge hooks; embed NIS computation inputs so NIS is computable without assumptions.",
+    "required_aut_declarations": {
+      "enabled": false,
+      "format": "json_block_or_yaml_block_embedded_in_answer",
+      "placement": "Append at end of answer under heading 'OIP-TF-DECLARATIONS'.",
+      "schema": {
+        "oip_tf_declarations": {
+          "type": "object",
+          "required": [
+            "governing_ecg",
+            "gate_profile",
+            "g5",
+            "g6",
+            "g2_sources"
+          ],
+          "properties": {
+            "governing_ecg": {
+              "type": "string",
+              "enum": [
+                "E1",
+                "E2",
+                "E3",
+                "E4",
+                "E5",
+                "E6"
+              ]
+            },
+            "gate_profile": {
+              "type": "object",
+              "required": [
+                "G1",
+                "G2",
+                "G3",
+                "G4",
+                "G5",
+                "G6",
+                "G7"
+              ],
+              "properties": {
+                "G1": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                "G2": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                "G3": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                "G4": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                "G5": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                "G6": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                "G7": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                }
+              }
+            },
+            "g2_sources": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "type": "object",
+                "required": [
+                  "tier",
+                  "descriptor",
+                  "context"
+                ],
+                "properties": {
+                  "tier": {
+                    "type": "string",
+                    "enum": [
+                      "T0",
+                      "T1",
+                      "T2",
+                      "T3",
+                      "T4"
+                    ]
+                  },
+                  "descriptor": {
+                    "type": "string"
+                  },
+                  "context": {
+                    "type": "string",
+                    "description": "What kind of source this is (e.g., statute, regulator guidance, peer-reviewed paper)."
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "If known; ISO date or year."
+                  }
+                }
+              }
+            },
+            "g5": {
+              "type": "object",
+              "required": [
+                "layering_present",
+                "global_coherence_scan_performed",
+                "contradictions_found"
+              ],
+              "properties": {
+                "layering_present": {
+                  "type": "boolean"
+                },
+                "global_coherence_scan_performed": {
+                  "type": "boolean"
+                },
+                "contradictions_found": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type",
+                      "a",
+                      "b",
+                      "status"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "logical",
+                          "factual",
+                          "definition_shift",
+                          "scope_shift",
+                          "premise_conclusion"
+                        ]
+                      },
+                      "a": {
+                        "type": "string",
+                        "description": "First conflicting proposition (short)."
+                      },
+                      "b": {
+                        "type": "string",
+                        "description": "Second conflicting proposition (short)."
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "resolved",
+                          "unresolved"
+                        ]
+                      },
+                      "resolution_note": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "g6": {
+              "type": "object",
+              "required": [
+                "representative_sets",
+                "coverage_statement_present"
+              ],
+              "properties": {
+                "coverage_statement_present": {
+                  "type": "boolean"
+                },
+                "representative_sets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "set_text",
+                      "satisfier_used",
+                      "omissions_acknowledged"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "set_text": {
+                        "type": "string",
+                        "description": "The list/typology claimed or implied as representative."
+                      },
+                      "satisfier_used": {
+                        "type": "string",
+                        "enum": [
+                          "scope_disclosure",
+                          "domain_proportional_coverage",
+                          "omission_acknowledgement",
+                          "none"
+                        ]
+                      },
+                      "omissions_acknowledged": {
+                        "type": "boolean"
+                      },
+                      "notes": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "deterministic_validator_rule": "AUT declarations are optional. Absence must not zero any gate; proceed with extraction + judge hooks."
+    },
+    "judge_hooks": {
+      "enabled": true,
+      "when_used": [
+        "If G5 coherence is ambiguous (no explicit contradictions listed but coherence markers present).",
+        "If G6 proportionality is claimed implicitly by broad list wording without explicit scope limitations.",
+        "If G2 cites sources vaguely and tier assignment affects verdict materially."
+      ],
+      "judge_prompt_templates": {
+        "G5_CONTRADICTION_ARBITRATION": {
+          "inputs": [
+            "answer_text",
+            "declared_contradictions"
+          ],
+          "prompt": "You are scoring OIP Gate 5 Global Coherence. Given the answer text and the model-declared contradictions list, determine whether any material contradictions remain unresolved. Return JSON: {\"unresolved\":true/false,\"items\":[...],\"rationale\":\"...\"} Do not invent contradictions not evidenced in the text; cite short snippets."
+        },
+        "G6_PROPORTIONALITY_ARBITRATION": {
+          "inputs": [
+            "answer_text",
+            "representative_set_item",
+            "domain_context"
+          ],
+          "prompt": "You are scoring OIP Gate 6 Scope Sufficiency. Assess whether the declared representative set plausibly covers dominant/high-impact categories for the stated domain. Return JSON: {\"proportional\":true/false,\"missing_major_classes\":[...],\"rationale\":\"...\"} Only use information in the answer and general domain common knowledge; flag uncertainty."
+        }
+      },
+      "output_contract": "Judge outputs must be embedded in TF record under gate_observations[].judge_findings."
+    },
+    "deterministic_extractor": {
+      "enabled": true,
+      "principle": "Score gates using text-extractable features first; if ambiguity remains, escalate to judge hooks.",
+      "extractors": {
+        "layer_headers": {
+          "patterns": [
+            "Core Facts",
+            "Context",
+            "Interpretation",
+            "Residual Uncertainty"
+          ]
+        },
+        "tier_markers": {
+          "patterns": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "Tier 1",
+            "Tier 2",
+            "Source Hierarchy",
+            "Evidence Hierarchy"
+          ]
+        },
+        "temporal_markers": {
+          "patterns": [
+            "as of",
+            "dated",
+            "currently",
+            "in 20",
+            "forward-looking"
+          ],
+          "year_regex": "\\b20\\d{2}\\b"
+        },
+        "density_markers": {
+          "patterns": [
+            "density",
+            "evidence count",
+            "count of sources",
+            "concentration",
+            "monoculture"
+          ]
+        },
+        "scope_markers": {
+          "patterns": [
+            "coverage",
+            "completeness",
+            "missing",
+            "non-exhaustive",
+            "examples",
+            "limited to",
+            "scope"
+          ],
+          "quant_markers": [
+            "±",
+            "%"
+          ]
+        },
+        "dialectic_markers": {
+          "patterns": [
+            "however",
+            "alternative",
+            "counter",
+            "vs.",
+            "on the other hand",
+            "competing",
+            "counterargument"
+          ]
+        },
+        "list_detector": {
+          "bullet_regex": "(^|\\n)\\s*[-•\\u2022]\\s+",
+          "enumeration_regex": "(^|\\n)\\s*\\d+\\.\\s+",
+          "max_items_to_extract": 12
+        }
+      },
+      "output": "Populate TF record with extracted markers, inferred sets, and confidence flags."
+    },
+    "deterministic_rules": [
+      "If tier markers absent, G2 may still score 1 if sources are listed without hierarchy.",
+      "If no explicit layer headers, G5 max is 1 unless contradiction/coherence analysis is explicit.",
+      "G6 representative set detection: treat any bullet/enumerated list >2 items as a candidate set unless explicitly labelled 'examples' or 'non-exhaustive'."
+    ],
+    "ecg_classifier": {
+      "enabled": true,
+      "principle": "Assign governing ECG class from question/answer content using deterministic keyword rules; conservative escalation to higher-stakes class on match.",
+      "precedence_high_to_low": [
+        "E6",
+        "E5",
+        "E4",
+        "E3",
+        "E2",
+        "E1"
+      ],
+      "rules": [
+        {
+          "ecg": "E6",
+          "if_any_keywords": [
+            "aml",
+            "money laundering",
+            "sanctions",
+            "regulator",
+            "compliance",
+            "fincrime",
+            "financial crime",
+            "risk flag",
+            "edd",
+            "kYC",
+            "ubO",
+            "court",
+            "gdpr",
+            "directive",
+            "clinical",
+            "patient",
+            "diagnosis",
+            "treatment",
+            "medical",
+            "dosage"
+          ]
+        },
+        {
+          "ecg": "E5",
+          "if_any_keywords": [
+            "should",
+            "must",
+            "recommend",
+            "best course",
+            "advise",
+            "verdict",
+            "decision",
+            "approve",
+            "deny",
+            "liable"
+          ]
+        },
+        {
+          "ecg": "E4",
+          "if_any_keywords": [
+            "evidence hierarchy",
+            "tier 1",
+            "t1",
+            "core facts",
+            "residual uncertainty",
+            "anomaly",
+            "hypothesis",
+            "astrophysics",
+            "gravitational wave",
+            "dark matter",
+            "interstellar object"
+          ]
+        },
+        {
+          "ecg": "E3",
+          "if_any_keywords": [
+            "explain",
+            "overview",
+            "summary",
+            "how does",
+            "what is"
+          ]
+        },
+        {
+          "ecg": "E2",
+          "if_any_keywords": [
+            "joke",
+            "poem",
+            "story",
+            "fiction"
+          ]
+        },
+        {
+          "ecg": "E1",
+          "default": true
+        }
+      ],
+      "notes": "This classifier is deterministic but approximate; judge hook may override governing_ecg where misclassified."
+    },
+    "ecg_gate_intensity_matrix": {
+      "description": "Policy: applied_intensity per gate by governing ECG class (0=not applied,1=light,2=full).",
+      "matrix": {
+        "E1": {
+          "G1": 0,
+          "G2": 0,
+          "G3": 0,
+          "G4": 0,
+          "G5": 0,
+          "G6": 0,
+          "G7": 0
+        },
+        "E2": {
+          "G1": 1,
+          "G2": 0,
+          "G3": 0,
+          "G4": 0,
+          "G5": 1,
+          "G6": 0,
+          "G7": 1
+        },
+        "E3": {
+          "G1": 1,
+          "G2": 1,
+          "G3": 1,
+          "G4": 1,
+          "G5": 1,
+          "G6": 1,
+          "G7": 1
+        },
+        "E4": {
+          "G1": 2,
+          "G2": 2,
+          "G3": 2,
+          "G4": 2,
+          "G5": 2,
+          "G6": 2,
+          "G7": 2
+        },
+        "E5": {
+          "G1": 2,
+          "G2": 2,
+          "G3": 2,
+          "G4": 2,
+          "G5": 2,
+          "G6": 2,
+          "G7": 2
+        },
+        "E6": {
+          "G1": 2,
+          "G2": 2,
+          "G3": 2,
+          "G4": 2,
+          "G5": 2,
+          "G6": 2,
+          "G7": 2
+        }
+      },
+      "notes": "E4/E5/E6 full-gate application aligns with the current handbook matrix discussions; adjust if matrix changes."
+    },
+    "output_contract": {
+      "per_gate_fields_required": [
+        "gate_id",
+        "applied_intensity",
+        "result",
+        "result_basis",
+        "penalty"
+      ],
+      "result_enum": [
+        "PASS",
+        "WARNING",
+        "FAIL",
+        "N/A"
+      ],
+      "rule": "Do not infer PASS/WARNING/FAIL from applied_intensity. Result must be derived from checks run at that intensity."
+    }
+  },
+  "nis": {
+    "definition": "Normalized Integrity Score (0-100) computed from penalties over applied gates.",
+    "result_space": [
+      "PASS",
+      "WARNING",
+      "FAIL",
+      "N/A"
+    ],
+    "severity_by_gate": {
+      "G1": "secondary",
+      "G2": "critical",
+      "G3": "secondary",
+      "G4": "secondary",
+      "G5": "critical",
+      "G6": "critical",
+      "G7": "secondary"
+    },
+    "penalty_by_severity_and_result": {
+      "critical": {
+        "PASS": 0,
+        "WARNING": 15,
+        "FAIL": 40,
+        "N/A": 0
+      },
+      "secondary": {
+        "PASS": 0,
+        "WARNING": 10,
+        "FAIL": 30,
+        "N/A": 0
+      }
+    },
+    "max_penalty_by_severity": {
+      "critical": 40,
+      "secondary": 30
+    },
+    "formula": "NIS = round(100 * (1 - total_penalty / max_possible_penalty_over_applied_gates))",
+    "edge_case": "If max_possible_penalty_over_applied_gates == 0 then NIS = 100."
+  }
+}
