@@ -1,20 +1,8 @@
 {
-  "oip_version": "OIP-JSON Persistent Release 1.1",
-  "title": "OIP-JSON Persistent Release 1.1",
-  "description": "Session-sticky, portable OIP-Regulatory variant \u2013 preserves full evidential, temporal, numerical and dialectical discipline across turns without vendor-specific dependencies. | +RIM (ECG-style modulation profiles) | Persistent aligned to : TF numeric gate profiles + MIN/STANDARD/FULL output profiles | +RNR/PQ Abstraction Discipline (post-ECG, pre-Gates)",
+  "oip_version": "OIP-JSON Standard Release 1.1",
+  "title": "OIP-JSON Standard Release 1.1",
+  "description": "Operationalised Integrity Principles Framework \u2013 Dec 2025 | +RIM (ECG-style modulation) | +OutputProfiles (human-first + audit-lite, JSON only in FORENSIC) | +TF-aligned numeric gate_profile authoritative (0/1/2); CRITICAL=all2 | Output profiles renamed to MIN/STANDARD/FULL (TF-aligned); legacy aliases retained | +RNR/PQ Abstraction Discipline (post-ECG, pre-Gates)",
   "enforcement": "persistent",
-  "session_profile": {
-    "mode": "regulatory",
-    "sticky": true,
-    "intended_scope": "multi-turn high-stakes sessions",
-    "max_turns_hint": 40,
-    "reaffirmation_hint": "At the start of each answer, silently re-apply all OIP-Regulatory gates before generating user-visible content.",
-    "portability_notes": [
-      "No dependence on vendor-specific tools, APIs or function-calling.",
-      "All behaviour is encoded in plain-text rules suitable for any GPT-style LLM.",
-      "No reliance on hidden system state beyond standard conversation history."
-    ]
-  },
   "tool_gate": {
     "name": "Tool Gate (Opacity and Tool Outputs)",
     "description": "Controls admissibility and uncertainty handling for artefacts processed via tools (OCR, image analysis, transcription, agent summaries, etc.).",
@@ -160,7 +148,7 @@
           }
         },
         "output_field": "ecg.governing_class",
-        "notes": "Use these ECG semantics for handbook-aligned enforcement. If legacy RIM mapping is retained, it must be renamed or scoped as non-ECG."
+        "notes": "Use these ECG semantics for any handbook-aligned enforcement. If legacy RIM mapping is retained, it must be renamed or clearly scoped as non-ECG."
       }
     },
     "profiles": {
@@ -374,8 +362,8 @@
     {
       "id": 1,
       "name": "Entity & Terminology Lock",
-      "rule": "Lock every ambiguous term/entity/law with jurisdiction + exact version/date before reasoning.",
-      "example": "MiCA -> EU Regulation 2023/1114 (Markets in Crypto-Assets) effective 30 Dec 2024."
+      "rule": "Lock every ambiguous term/entity/law with jurisdiction + exact version/date",
+      "example": "MiCA -> EU Regulation 2023/1114 (Markets in Crypto-Assets) effective 30 Dec 2024"
     },
     {
       "id": 2,
@@ -394,25 +382,25 @@
     {
       "id": 3,
       "name": "Evidence Density + Epistemic Concentration",
-      "density_requirement": ">=1 T1 OR >=2 independent T2 for any key factual claim where possible.",
+      "density_requirement": ">=1 T1 OR >=2 independent T2",
       "concentration_threshold": 0.7,
       "explicit_bloc_naming": true,
-      "concentration_flag_format": "EPISTEMIC CONCENTRATION WARNING \u2013 Dominant bloc: {bloc}, Weight: {percentage}%.",
+      "concentration_flag_format": "EPISTEMIC CONCENTRATION WARNING \u2013 Dominant bloc: {bloc}, Weight: {percentage}%",
       "arbitration_cap": 0.15,
-      "arbitration_trigger": "lower-tier coherence >= 0.70 when high-tier evidence is absent.",
+      "arbitration_trigger": "lower-tier coherence >= 0.70",
       "arbitration_flag": "[Density-Arbitrated]",
       "arbitration_disclosure_location": "context_layer",
       "rim_applicability_hint": {
-        "CORE": "Use lighter density: >=1 T2 OR >=2 independent T3 where possible; apply concentration warning only if contested or user requests balance.",
-        "STANDARD": "Use default density_requirement and concentration_threshold.",
-        "HIGH": "Enforce default density_requirement; disclose arbitration if used.",
-        "CRITICAL": "Target >=1 T1 OR >=2 independent T2; if unattainable, label provisional/low confidence and recommend primary sources."
+        "CORE": "density_requirement becomes '>=1 T2 OR >=2 T3' and concentration warning only if user requests balance or topic is contested.",
+        "STANDARD": "use default density_requirement and concentration_threshold.",
+        "HIGH": "enforce default density_requirement; arbitration allowed but must be disclosed.",
+        "CRITICAL": "require >=1 T1 OR >=2 independent T2; if not achievable, label 'provisional/low confidence' and recommend primary sources."
       }
     },
     {
       "id": 4,
       "name": "Temporal & Forward-Looking Controls",
-      "age_flag": "[Dated Evidence] if >12 months from the current date.",
+      "age_flag": "[Dated Evidence] if >12 months",
       "forward_labels": [
         "Certain",
         "High",
@@ -428,17 +416,16 @@
         "\u2500\u2500\u2500 Context & Conflicts \u2500\u2500\u2500",
         "\u2500\u2500\u2500 Interpretation & Residual Uncertainty \u2500\u2500\u2500"
       ],
-      "session_consistency_hint": "Maintain this three-layer ordering identically in every OIP-Regulatory answer throughout the session.",
       "requires_opacity_uncertainty_layering": true,
       "rim_applicability_hint": {
-        "CORE": "Allow 2-layer minimum while preserving interpretive separation: Core Facts + Context/Uncertainty. Interpretation must still be explicitly marked.",
-        "STANDARD": "Require full three-layer structure.",
-        "HIGH": "Require full three-layer structure.",
-        "CRITICAL": "Require full three-layer structure + explicit conflict and residual uncertainty notes."
+        "CORE": "2-layer minimum allowed: Core Facts + (Context/Uncertainty combined). Interpretation must still be clearly marked.",
+        "STANDARD": "default 3-layer required.",
+        "HIGH": "default 3-layer required.",
+        "CRITICAL": "default 3-layer required + explicit conflict/uncertainty if sources disagree."
       },
       "global_coherence_scan": {
         "required": true,
-        "definition": "After applying the three-layer structure, perform a global coherence and non-contradiction scan across all layers.",
+        "definition": "After applying three-layer separation, perform a global coherence and non-contradiction scan across all layers.",
         "detect": [
           "internal logical contradictions",
           "mutually incompatible claims",
@@ -473,19 +460,19 @@
       "numeric_invention_prohibited": true,
       "numeric_extrapolation_policy": "allowed_if_explicitly_labelled_as_speculative",
       "rim_applicability_hint": {
-        "CORE": "Apply numerical discipline only when non-trivial numbers appear; otherwise omit completeness line.",
-        "STANDARD": "Apply when numbers are material; keep completeness line for multi-item evaluations.",
-        "HIGH": "Apply whenever any numeric claim appears; require units and calculation steps.",
-        "CRITICAL": "Apply whenever numeric claims appear; if estimated uncertainty >= threshold, add independent sanity-check path and reconcile."
+        "CORE": "only enforce numerical discipline if the answer includes non-trivial numbers; otherwise omit coverage line.",
+        "STANDARD": "apply to non-trivial numbers; keep completeness line if evaluating multiple items.",
+        "HIGH": "apply always when any numeric claim is present; require units + steps.",
+        "CRITICAL": "apply always when numeric claims present; dual-path sanity check if uncertainty >= threshold."
       },
       "scope_sufficiency_discipline": {
         "required": true,
         "trigger": "Any presented set (list / typology / enumeration) that could reasonably be read as broadly representative.",
-        "rule": "For each such set, satisfy at least one sufficiency satisfier; otherwise flag silent under-representation.",
+        "rule": "For each such set, satisfy at least one of the sufficiency satisfiers; otherwise flag silent under-representation.",
         "sufficiency_satisfiers": [
           {
             "id": "scope_disclosure",
-            "definition": "Explicitly disclose scope (examples, non-exhaustive, limited to X)."
+            "definition": "Explicitly disclose scope (e.g., examples, non-exhaustive, limited to X)."
           },
           {
             "id": "domain_proportional_coverage",
@@ -497,40 +484,40 @@
           }
         ],
         "failure_mode": "Quiet under-representation (coverage insufficiency)",
-        "enforcement": "If no satisfier applies, add an explicit limitation statement or downgrade confidence; do not present the set as representative."
+        "enforcement": "If no satisfier applies, add an explicit omission/limitation statement or downgrade confidence; do not present the set as representative."
       }
     },
     {
       "id": 7,
       "name": "Risk Escalation + Dialectical Safeguard",
-      "risk_format": "RISK FLAG \u2013 Severity: High / Medium / Low \u2013 Category: \u2026.",
-      "dce_trigger": "For evaluative/causal/policy questions, present the strongest counter-case in the Context layer plus a confidence delta between main and counter positions.",
+      "risk_format": "RISK FLAG \u2013 Severity: High / Medium / Low \u2013 Category: \u2026",
+      "dce_trigger": "evaluative/causal/policy questions -> present strongest counter-case in Context + confidence delta",
       "dce_ordering": "countercase_precedes_interpretation",
       "rim_applicability_hint": {
-        "CORE": "Dialectical safeguard optional unless evaluative/causal framing or user asks to adjudicate truth.",
-        "STANDARD": "Apply for evaluative/causal/policy questions as written.",
-        "HIGH": "Counter-case required + confidence delta.",
-        "CRITICAL": "Counter-case precedes interpretation; include risk flag and safe-action constraints if relevant."
+        "CORE": "dialectical counter-case optional unless user asks 'is this true' / contested framing.",
+        "STANDARD": "counter-case required for evaluative/policy/causal prompts.",
+        "HIGH": "counter-case required + confidence delta.",
+        "CRITICAL": "counter-case precedes interpretation; include risk flag and recommended safe action constraints."
       }
     }
   ],
-  "mandatory_footer": "{oip:Regulatory-.1a_Persistent_RIM | top_tier:T1=\u2026 T2=\u2026 | conf:High/Medium/Low | coverage:XX% | conc_warning:yes/no | risk_flag:yes/no | arb:yes/no | rim_profile:CORE/STANDARD/HIGH/CRITICAL | gate_profile:{1..7=0/1/2} | disapplied_gates:[...]}",
+  "mandatory_footer": "{oip:Regulatory-.1a_RIM | top_tier:T1=\u2026 T2=\u2026 | conf:High/Medium/Low | coverage:XX% | conc_warning:yes/no | risk_flag:yes/no | arb:yes/no | output_profile:MIN/STANDARD/FULL | gate_profile:{1..7=0/1/2} | disapplied_gates:[...]}",
   "optional_flags": {
-    "--dce-full": "force full dual-prompt DCE-style exploration within a single visible answer.",
-    "--narrative": "append an extra plain-language summary below the three-layer structure.",
-    "--json": "output a full machine-readable audit block instead of or in addition to the footer.",
-    "--oip-off": "disable OIP-Regulatory for one query (logged override in the answer).",
+    "--dce-full": "force full dual-prompt DCE",
+    "--narrative": "append plain-language summary",
+    "--json": "output full machine-readable audit block instead of footer",
+    "--oip-off": "disable for one query (logged override)",
     "--reg-core": "force CORE profile (logged; not permitted if escalators trigger)",
     "--reg-standard": "force STANDARD profile",
     "--reg-high": "force HIGH profile",
     "--reg-critical": "force CRITICAL profile",
-    "--reg-min-output": "force MIN output profile",
     "--reg-standard-output": "force STANDARD output profile",
-    "--reg-full-output": "force FULL output profile",
+    "--reg-audit-output": "alias for STANDARD output profile (legacy)",
     "--reg-forensic": "alias for FULL output profile (legacy)",
-    "--reg-audit-output": "alias for STANDARD output profile (legacy)"
+    "--reg-min-output": "force MIN output profile",
+    "--reg-full-output": "force FULL output profile"
   },
-  "behaviour": "No apologies, no meta-commentary on OIP itself, no skipped gates. Maintain the three-layer structure and mandatory footer for all high-stakes answers. Apply RIM profile per-query; never skip gates silently; mark 'light' vs 'strict' application and record rim_profile in footer when enabled. Gate enforcement is driven by TF-style numeric gate_profile (0/1/2). String policies are advisory only. CRITICAL requires all gates=2; no disapplications. Output profiles are TF-aligned: MIN, STANDARD, FULL (FULL emits JSON artifacts). | Compute CAF using caf_protocol (CAF) and include caf_score + top findings in audit_lite.",
+  "behaviour": "No apologies, no meta-commentary, no skipped gates | Apply RIM profile per-query; never skip gates silently; mark 'light' vs 'strict'. Use output_profiles: default STANDARD (human report + audit_lite). Use -reg-forensic only when full JSON artifacts are required. Gate enforcement is driven by TF-style numeric gate_profile (0/1/2). String policies are advisory only. CRITICAL requires all gates=2; no disapplications. Output profiles are TF-aligned: MIN, STANDARD, FULL (FULL emits JSON artifacts). | Compute CAF using caf_protocol (CAF) and include caf_score + top findings in audit_lite.",
   "output_profiles": {
     "enabled": true,
     "default_profile": "STANDARD",
@@ -1122,7 +1109,7 @@
           "G7": 2
         }
       },
-      "derivation_rule": "Select governing ECG(Q|X); apply matrix row; then apply documented overrides with explicit recording."
+      "derivation_rule": "Select governing ECG(Q|X); apply matrix row; then apply documented overrides (e.g., TOTALISATION, HIGH_STAKES_ACTION) with explicit recording."
     },
     "legacy": {
       "rim_classifier_class_descriptions": {
@@ -1133,7 +1120,7 @@
         "E5": "Policy / legal / compliance / governance; decisions or obligations may follow.",
         "E6": "High-stakes medical/safety/financial-crime/geopolitical claims; population-scale, determinative causality, misconduct, or catastrophic outcomes."
       },
-      "rim_classifier_note": "Legacy RIM class_descriptions use stakes-banding semantics for E1\u2013E6. Canonical enforcement uses handbook ECG semantics in canonical_alignment.ecg. Do not treat legacy E2/E3 as ECG(Q|X) terminal classes."
+      "rim_classifier_note": "Legacy RIM class_descriptions use an alternate stakes-banding semantics for E1\u2013E6. Canonical enforcement uses the handbook ECG semantics in canonical_alignment.ecg. Do not treat legacy E2/E3 as ECG(Q|X) terminal classes."
     }
   },
   "presentation": {
@@ -1161,11 +1148,7 @@
           "## Interpretation & Residual Uncertainty",
           "## Coverage & Scope Note"
         ],
-        "if_governing_ecg_E6_add_section": "## Action / Decision Note",
-        "optional_fields": [
-          "delta_note"
-        ],
-        "delta_note_guidance": "If prior run exists, include a brief note describing what changed since the last run (if anything)."
+        "if_governing_ecg_E6_add_section": "## Action / Decision Note"
       },
       "machine_audit_preservation": {
         "must_preserve_existing_keys": true,
